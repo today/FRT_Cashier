@@ -1,0 +1,26 @@
+{
+  "name": "FRT_Cashier",
+  "main": "cashier.html",
+  "description": "福润堂收费系统",
+  "version": "0.1.0",
+  "keywords": [ "中医","门诊","收费", "node-webkit" ],
+
+  "window": {
+  	"title": "福润堂",
+  	"icon": "icon.png",
+    "toolbar": true,
+    "frame": true,
+    "fullscreen": false,
+    "position": "center",
+    "resizable": true,
+    "width": 1000,
+    "height": 800
+  },
+  "dependencies": {
+    "underscore": "~1.4.4"
+  },
+  "webkit": {
+       "plugin": false
+    }
+}
+

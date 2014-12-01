@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>福润堂 收银</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script type="text/javascript" src="lib/angular.js"></script>
+  <script type="text/javascript" src="js/FRT_cashier.js"></script>
+  <style type="text/css">
+    input.ng-invalid.ng-dirty, input.ng-invalid.ng-invalid {
+      background-color: yellow;
+    }
+  </style>
+  
+</head>
+<body ng-app="inputApp" ng-controller="Ctrl">
+  <span id='debug_area' style='display:none;'> 开发人员专用区域，按  `  键(ESC键下面那个键)，就可隐藏。  
+    <input type="button" value=" 测试: test001 " onclick="test001()"  />
+    <input type="button" value=" 测试: 填充数据 " ng-click="test002()"  />
+  </span>
+
+  <h1 style="">福润堂</h1> 
+  <h2>收银</h2>
+  <br>
+  <!--
+  <div>
+    病历号:   <input  type="text" id="id_0"  ng-model="fields.patient_no"   style="width:100px"  required ng-trim="true" />
+    姓名:     <input  type="text" id="id_2"  ng-model="fields.patient_name" style="width:60px"   /> 
+    性别:     <input  type="text"    id="id_3"   ng-model="newdata.case.sex"     style="width:20px"    />
+    年龄:     <input  type="number"  id="id_4"   ng-model="newdata.case.age"     style="width:30px"    />
+  </div>
+-->
+
+  <table border="1"><tr>   
+    <td> 
+      <div >   处方：    
+        <table border="1" width="500">
+          <tr><td></td><td>药名</td><td>用量</td><td>单位</td><td>单价</td><td>小计</td><td></td></tr>  
+
+          <tr ng-repeat="obj in data.recipe.items">
+            <td>&nbsp; {{$index+1}} &nbsp; </td>
+            <td>{{obj.name}}</td>
+            <td>{{obj.count}}</td>
+            <td>{{obj.unit}}</td>
+            <td>{{obj.price}}</td>
+            <td>{{obj.xiaoji}}</td>
+            <td><input type="button" ng-click="goEdit( $index )" ng-hide="datas.isUpload" value=" 修改 "> </td>
+          </tr>
+         
+        </table>
+        <br>
+          药品名称：
+
+          <select id="id_0" ng-model="fields.name" ng-options="medic.key as medic.value for medic in medicine_list"></select>
+
+          药品用量：<input  type="number"  id="id_1"   ng-model="fields.count"    style="width:35px"    required  ng-trim="true" />&nbsp;克&nbsp;
+        <input type="button" id="id_2" value=" 保存 & 下一个 "   ng-click="save()"   />
+      </div>
+      抓药数量：<input  type="text"     ng-model="data.fields.suitcount"      style="width:75px"    required  ng-trim="true" />
+      <input type="button" value=" 计价 "   ng-click="go_calc()"   />
+        
+      </td>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>    
+    <td >
+      <h2>
+      单付价格：{{data.fields.suitprice}}
+        
+        <br><br>
+        总价：{{data.fields.sumprice}}
+        <br><br>
+        <input type="button" value=" 打印 & 结帐 "   ng-click="saveCase()"   />
+        </h2>
+        
+    </td>
+  </tr>
+</table>
+
+
+  
+<script type="text/javascript">
+  var inputApp = angular.module('inputApp', []);
+
+  function Ctrl($scope) {
+    
+
+    $scope.dummy = "will";
+    $scope.data = {};
+    $scope.fields = {};
+    $scope.data.patient = {};
+    $scope.data.recipe = {};
+    $scope.data.recipe.items = [];
+
+    $scope.fields.suitprice = 0;
+    $scope.fields.suitcount = 5;
+    $scope.fields.sumprice = 0;
+
+    var tempObj = {"name":"药材","count":"1","unit":"克","price":"0.0","xiaoji":"0.0"}
+
+    $scope.save = function(){
+      var oneObj = _.clone(tempObj);
+      oneObj.name = $scope.fields.name;
+      oneObj.count = $scope.fields.count;
+
+      oneObj.xiaoji = oneObj.price * oneObj.count;
+      $scope.data.recipe.items.push(oneObj);
+
+      $scope.fields.name = "";
+      $scope.fields.count = "";
+
+      obj = document.getElementById( 'id_0' );
+      obj.focus();
+      //obj.select();
+    }
+    
+    $scope.getAllMedicine = function(){
+      var  Medicine_json = readFileToJson("./data/allMedicine.json");
+      console.log(Medicine_json);
+      return Medicine_json;
+    };
+
+    // 读入所有 药物 信息
+    $scope.allMedicine = $scope.getAllMedicine();
+    //console.log(" len:" + $scope.allMedicine.length);
+    //console.log($scope.allMedicine[0]);
+
+    $scope.medicine_list = [];
+    for( var i=0; i<$scope.allMedicine.length; i++ ){
+      var obj = $scope.allMedicine[i];
+      medic = new Object();
+      medic.key = obj.medicine_name;
+      medic.value = obj.short_name + "-" + obj.medicine_name;
+      //console.log(typeof(medic));
+      $scope.medicine_list.push(medic);
+    }
+    //console.log($scope.medicine_list);
+  }
+   
+  debug_flag = 0;
+ 
+  
+  
+
+
+  </script>
+</body>
+</html>
+
+
+
+

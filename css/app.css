@@ -1,0 +1,34 @@
+/* app css stylesheet */
+
+body {
+  padding-top: 10px;padding-left:10px; padding-right:10px; 
+}
+
+
+
+h1 {
+  border-bottom: 1px solid gray;
+}
+
+hr {
+  border-bottom: 1px solid gray;
+}
+
+#auto_hide_msg{
+	padding:10px;background-color:#666666;color:#FFFFFF;
+	width:300px;height:150px;
+	display:block; 
+	position: absolute;
+	top:50%;
+	left:50%;
+	margin-left:-150px;
+	margin-top:-75px;
+}
+
+
+input[disabled]
+{
+
+  color: #CCCCCC;
+  
+}
