@@ -112,6 +112,7 @@ document.onkeydown = function(event) {
             
             var obj = document.getElementById('id_' + (i_id + 1 + skip_num) );
             if( obj ){
+
               obj.focus();
               obj.select();
               return;
@@ -122,7 +123,10 @@ document.onkeydown = function(event) {
           // loop to 0
           obj = document.getElementById( 'id_0' );
           obj.focus();
-          obj.select();
+          if(obj.type === "text"){
+          	obj.select();
+          }
+          
           
         }
         else{
