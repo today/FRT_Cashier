@@ -40,19 +40,19 @@
 
           <tr ng-repeat="obj in data.recipe.items">
             <td>&nbsp; {{$index+1}} &nbsp; </td>
-            <td>{{obj.name}}</td>
+            <td>{{obj.medicine_name}}</td>
             <td>{{obj.count}}</td>
             <td>{{obj.unit}}</td>
             <td>{{obj.price}}</td>
             <td>{{obj.xiaoji}}</td>
-            <td><input type="button" ng-click="goEdit( $index )" ng-hide="datas.isUpload" value=" 修改 "> </td>
+            <td><input type="button" ng-click="goEdit( $index )" ng-hide="datas.isUpload" value=" 修改(正在做) "> </td>
           </tr>
          
         </table>
         <br>
           药品名称：
 
-          <select id="id_0" ng-model="fields.name" ng-options="medic.key as medic.value for medic in medicine_list" style="width:135px" ></select>
+          <select id="id_0" ng-model="fields.medicine_name" ng-options="medic.key as medic.value for medic in medicine_list" style="width:135px" ></select>
 
           药品用量：<input  type="number"  id="id_1"   ng-model="fields.count"    style="width:35px"    required  ng-trim="true" />&nbsp;克&nbsp;
         <input type="button" id="id_2" value=" 保存 & 下一个 "   ng-click="save()"   />
@@ -93,11 +93,11 @@
     $scope.data.suitcount = 0;
     $scope.data.sumprice = 0;
 
-    var tempObj = {"name":"药材","count":"1","unit":"克","price":"0.0","xiaoji":"0.0"}
+    var tempObj = {"medicine_name":"药材","count":"1","unit":"克","price":"0.0","xiaoji":"0.0"}
 
     $scope.save = function(){
       // 检查输入是否正确
-      if( isblank($scope.fields.name) ){
+      if( isblank($scope.fields.medicine_name) ){
         alert("请输入药品名称");
         obj = document.getElementById( 'id_0' );
         obj.focus();
@@ -120,13 +120,15 @@
       
 
       var oneObj = _.clone(tempObj);
-      oneObj.name = $scope.fields.name;
+      oneObj.medicine_name = $scope.fields.medicine_name;
       oneObj.count = $scope.fields.count;
-
-      oneObj.xiaoji = oneObj.price * oneObj.count;
+      oneObj.unit = "克";
+      oneObj.price = "";
+      oneObj.xiaoji = "";
+      //oneObj.xiaoji = oneObj.price * oneObj.count;
       $scope.data.recipe.items.push(oneObj);
 
-      $scope.fields.name = "";
+      $scope.fields.medicine_name = "";
       $scope.fields.count = "";
 
       obj = document.getElementById( 'id_0' );
@@ -158,9 +160,19 @@
         return false;
       }
 
-      $scope.data.suitprice = 10;
+      for( var i=0; i<$scope.data.recipe.items.length; i++){
+        var item = $scope.data.recipe.items[i];
+        var name = item.medicine_name
+        var tempObj = _.findWhere($scope.allMedicine, {medicine_name: name});
+        console.log(tempObj);
+        item.price = tempObj.price;
+        item.xiaoji = (item.price * item.count).toFixed(2);  // 保留两位小数
+        $scope.data.suitprice = parseFloat($scope.data.suitprice) + parseFloat(item.xiaoji) ;
+      }
+
+      $scope.data.suitprice = $scope.data.suitprice.toFixed(2);
       
-      $scope.data.sumprice = 110;
+      $scope.data.sumprice = ($scope.data.suitprice * $scope.data.suitcount).toFixed(2);
       
     }
 
@@ -185,6 +197,26 @@
       $scope.medicine_list.push(medic);
     }
     //console.log($scope.medicine_list);
+
+    $scope.test002 = function(){
+
+      $scope.data.recipe.items[0] = _.clone($scope.allMedicine[0]);
+      $scope.data.recipe.items[0].count = 7;
+      $scope.data.recipe.items[0].unit = "克"
+      $scope.data.recipe.items[0].price = "";
+
+      $scope.data.recipe.items[1] = _.clone($scope.allMedicine[1]);
+      $scope.data.recipe.items[1].count = 7;
+      $scope.data.recipe.items[1].unit = "克"
+      $scope.data.recipe.items[1].price = "";
+
+      $scope.data.recipe.items[2] = _.clone($scope.allMedicine[3]);
+      $scope.data.recipe.items[2].count = 7;
+      $scope.data.recipe.items[2].unit = "克"
+      $scope.data.recipe.items[2].price = "";
+      
+      $scope.data.suitcount = 3;
+    };
   }
   
   var obj = document.getElementById( 'id_0' );
