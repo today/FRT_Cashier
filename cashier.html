@@ -31,7 +31,7 @@
     年龄:     <input  type="number"  id="id_4"   ng-model="newdata.case.age"     style="width:30px"    />
   </div>
 -->
-
+  门诊号：<input  type="text"   ng-model="data.case_no"   style="width:100px"  required ng-trim="true" />
   <table border="1"><tr>   
     <td> 
       <div >   处方：    
@@ -69,7 +69,8 @@
         <br><br>
         总价：{{data.sumprice}}
         <br><br>
-        <input type="button" value=" 打印 & 结帐 "   ng-click="saveCase()"   />
+        <input type="button" value=" 打印 & 结帐 "   ng-click="go_save()"   />
+        <input type="button" value=" 撤销 & 清除 "   ng-click="go_clear()"   />
         </h2>
         
     </td>
@@ -175,6 +176,16 @@
       $scope.data.sumprice = ($scope.data.suitprice * $scope.data.suitcount).toFixed(2);
       
     }
+
+    $scope.go_save = function(){
+      // TODO:保存到文件中
+
+      $scope.data.recipe.items = [];
+    };
+    
+    $scope.go_clear = function(){
+      $scope.data.recipe.items = [];
+    };
 
     $scope.getAllMedicine = function(){
       var  Medicine_json = readFileToJson("./data/allMedicine.json");
