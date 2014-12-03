@@ -80,6 +80,7 @@ function readFileToJson( filename ){
 
 document.onkeydown = function(event) { 
     keynum = event.which;
+    //console.log(keynum);
 
     // 这一段是用来显示隐藏debug区的。
     if (keynum==192){
@@ -94,6 +95,23 @@ document.onkeydown = function(event) {
       else if(debug_flag == 2 ){
         debug_flag = 0;
         document.getElementById('debug_area').style.display="none";//隐藏
+      }
+        
+    }
+    else if (keynum==27){
+      
+      if( debug_flag == 0 ){
+        debug_flag++;
+      }else if(debug_flag == 1 ){
+        debug_flag++;
+        
+        var btn = document.getElementById("id_fill");
+        btn.click();
+        //$rootScope.test_fill();
+      }
+      else if(debug_flag == 2 ){
+        debug_flag = 0;
+        
       }
         
     }

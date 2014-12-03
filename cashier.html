@@ -16,8 +16,8 @@
 </head>
 <body ng-app="inputApp" ng-controller="Ctrl">
   <span id='debug_area' style='display:none;'> 开发人员专用区域，按  `  键(ESC键下面那个键)，就可隐藏。  
-    <input type="button" value=" 测试: test001 " onclick="test001()"  />
-    <input type="button" value=" 测试: 填充数据 " ng-click="test002()"  />
+    
+    <input type="button" id="id_fill" value=" 测试: 填充数据 " ng-click="test_fill()"  />
   </span>
 
   <h1 style="">福润堂</h1> 
@@ -45,7 +45,7 @@
             <td>{{obj.unit}}</td>
             <td>{{obj.price}}</td>
             <td>{{obj.xiaoji}}</td>
-            <td><input type="button" ng-click="goEdit( $index )" ng-hide="datas.isUpload" value=" 修改(正在做) "> </td>
+            <td><input type="button" ng-click="goDel( $index )" ng-hide="datas.isUpload" value=" 删除 "> </td>
           </tr>
          
         </table>
@@ -177,6 +177,11 @@
       
     }
 
+    $scope.goDel = function( index ){
+      $scope.data.recipe.items[index] = null;
+      $scope.data.recipe.items = _.compact($scope.data.recipe.items) 
+    };
+
     $scope.go_save = function(){
       // TODO:保存到文件中
 
@@ -209,7 +214,7 @@
     }
     //console.log($scope.medicine_list);
 
-    $scope.test002 = function(){
+    $scope.test_fill = function(){
 
       $scope.data.recipe.items[0] = _.clone($scope.allMedicine[0]);
       $scope.data.recipe.items[0].count = 7;
@@ -235,6 +240,7 @@
 
   debug_flag = 0;
 
+  
 
   </script>
 </body>
