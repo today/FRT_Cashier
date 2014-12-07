@@ -31,7 +31,7 @@
     年龄:     <input  type="number"  id="id_4"   ng-model="newdata.case.age"     style="width:30px"    />
   </div>
 -->
-  门诊号：<input  type="text"   ng-model="data.case_no"   style="width:100px"  required ng-trim="true" />
+  门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case_no"   style="width:100px"  required ng-trim="true" />
   <table border="1"><tr>   
     <td> 
       <div >   处方：    
@@ -54,7 +54,7 @@
 
           <select id="id_0" ng-model="fields.medicine_name" ng-options="medic.key as medic.value for medic in medicine_list" style="width:135px" ></select>
 
-          药品用量：<input  type="number"  id="id_1"   ng-model="fields.count"    style="width:35px"    required  ng-trim="true" />&nbsp;克&nbsp;
+          药品用量：<input  type="number"  id="id_1"   ng-model="fields.count"    style="width:35px"  ng-trim="true" />&nbsp;克&nbsp;
         <input type="button" id="id_2" value=" 保存 & 下一个 "   ng-click="save()"   />
       </div>
       抓药数量(付数)：<input  type="text"  id="id_suitcount"   ng-model="data.suitcount"      style="width:75px"    required  ng-trim="true" />
@@ -91,7 +91,7 @@
     $scope.data.recipe.items = [];
 
     $scope.data.suitprice = 0;
-    $scope.data.suitcount = 0;
+    $scope.data.suitcount = "";
     $scope.data.sumprice = 0;
 
     var tempObj = {"medicine_name":"药材","count":"1","unit":"克","price":"0.0","xiaoji":"0.0"}
@@ -161,11 +161,12 @@
         return false;
       }
 
+      $scope.data.suitprice = 0;
       for( var i=0; i<$scope.data.recipe.items.length; i++){
         var item = $scope.data.recipe.items[i];
         var name = item.medicine_name
         var tempObj = _.findWhere($scope.allMedicine, {medicine_name: name});
-        console.log(tempObj);
+        //console.log(tempObj);
         item.price = tempObj.price;
         item.xiaoji = (item.price * item.count).toFixed(2);  // 保留两位小数
         $scope.data.suitprice = parseFloat($scope.data.suitprice) + parseFloat(item.xiaoji) ;
@@ -194,7 +195,7 @@
 
     $scope.getAllMedicine = function(){
       var  Medicine_json = readFileToJson("./data/allMedicine.json");
-      console.log(Medicine_json);
+      //console.log(Medicine_json);
       return Medicine_json;
     };
 
@@ -216,18 +217,18 @@
 
     $scope.test_fill = function(){
 
-      $scope.data.recipe.items[0] = _.clone($scope.allMedicine[0]);
+      $scope.data.recipe.items[0] = _.clone($scope.allMedicine[10]);
       $scope.data.recipe.items[0].count = 7;
       $scope.data.recipe.items[0].unit = "克"
       $scope.data.recipe.items[0].price = "";
 
-      $scope.data.recipe.items[1] = _.clone($scope.allMedicine[1]);
-      $scope.data.recipe.items[1].count = 7;
+      $scope.data.recipe.items[1] = _.clone($scope.allMedicine[11]);
+      $scope.data.recipe.items[1].count = 9;
       $scope.data.recipe.items[1].unit = "克"
       $scope.data.recipe.items[1].price = "";
 
-      $scope.data.recipe.items[2] = _.clone($scope.allMedicine[3]);
-      $scope.data.recipe.items[2].count = 7;
+      $scope.data.recipe.items[2] = _.clone($scope.allMedicine[13]);
+      $scope.data.recipe.items[2].count = 11;
       $scope.data.recipe.items[2].unit = "克"
       $scope.data.recipe.items[2].price = "";
       
