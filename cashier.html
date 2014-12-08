@@ -50,13 +50,22 @@
          
         </table>
         <br>
-          药品名称：
-
-          <select id="id_0" ng-model="fields.medicine_name" ng-options="medic.key as medic.value for medic in medicine_list" style="width:135px" ></select>
+        助记码：<input  type="text"  id="id_0"   ng-model="zjm"  ng-blur="go_zjm()"   style="width:35px" />
+          
+        药品名称：
+          <input  type="text" ng-model="fields.medicine_name" style="width:80px" readonly >
 
           药品用量：<input  type="number"  id="id_1"   ng-model="fields.count"    style="width:35px"  ng-trim="true" />&nbsp;克&nbsp;
         <input type="button" id="id_2" value=" 保存 & 下一个 "   ng-click="save()"   />
       </div>
+       <table width="100%" border="">
+          <tr ng-repeat="medi in allMedicine| filter:condition_zjm | limitTo:5 ">
+            <td>{{medi.short_name}}</td>
+            <td>{{medi.medicine_name}}</td>
+            <td>{{medi.price}}</td>
+            
+          </tr>
+        </table>
       抓药数量(付数)：<input  type="text"  id="id_suitcount"   ng-model="data.suitcount"      style="width:75px"    required  ng-trim="true" />
       <input type="button" value=" 计价 "   ng-click="go_calc()"   />
         
@@ -84,6 +93,8 @@
     
 
     $scope.dummy = "will";
+    $scope.zjm = "";
+    
     $scope.data = {};
     $scope.fields = {};
     $scope.data.patient = {};
@@ -191,6 +202,36 @@
     
     $scope.go_clear = function(){
       $scope.data.recipe.items = [];
+      $scope.data.suitprice = 0;
+      $scope.data.sumprice = 0;
+    };
+
+    $scope.go_zjm = function(){
+      
+      var str_zjm = $scope.zjm;
+
+      var temp_array = _.filter($scope.allMedicine, $scope.condition_zjm);
+      if( temp_array.length > 0 ){
+        console.log(temp_array[0].medicine_name);
+        $scope.fields.medicine_name = temp_array[0].medicine_name;
+        $scope.zjm = "";
+      }
+      console.log(temp_array);
+    };
+
+    $scope.condition_zjm = function(value){
+      var str_a = value.short_name.toUpperCase();
+      //console.log(typeof($scope.zjm));
+      var str_b = $scope.zjm.toUpperCase();
+      if(str_b == ""){
+        return false;
+      }
+      else if(str_a.indexOf(str_b)==0 ){
+        return true;
+      }
+      else{
+        return false;
+      }
     };
 
     $scope.getAllMedicine = function(){
