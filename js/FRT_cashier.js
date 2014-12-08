@@ -1,5 +1,8 @@
-var fs = require('fs');
+
 var _ = require('underscore');
+
+var fs = require('fs');
+var path = require('path');
 
 
 function isblank(strA){
@@ -141,6 +144,7 @@ document.onkeydown = function(event) {
           // loop to 0
           obj = document.getElementById( 'id_0' );
           obj.focus();
+          console.log(obj.type );
           if(obj.type === "text"){
           	obj.select();
           }

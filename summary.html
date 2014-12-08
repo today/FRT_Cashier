@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>福润堂 日结</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script type="text/javascript" src="lib/angular.js"></script>
+  <script type="text/javascript" src="js/FRT_cashier.js"></script>
+  <style type="text/css">
+    input.ng-invalid.ng-dirty, input.ng-invalid.ng-invalid {
+      background-color: yellow;
+    }
+  </style>
+  
+</head>
+<body ng-app="inputApp" ng-controller="Ctrl">
+  <span id='debug_area' style='display:none;'> 开发人员专用区域，按  `  键(ESC键下面那个键)，就可隐藏。  
+    
+    <input type="button" id="id_fill" value=" 测试: 填充数据 " ng-click="test_fill()"  />
+  </span>
+
+  <h1 style="">福润堂</h1> 
+  <h2>日结</h2>
+  <br>
+  <input type="button" value=" 第一步：装入数据 "   ng-click="go_detail()"   />
+  <input type="button" value=" 第二步：计算汇总 "   ng-click="go_summary()"   />
+  <h2>Summary</h2>
+  <table border="1" width="500">
+    <tr><td></td><td>药名</td><td>用量</td></tr>  
+    <tr ng-repeat="obj in summary">
+      <td>&nbsp; {{$index+1}} &nbsp; </td>
+      <td>{{obj.medicine_name}}</td>
+      <td>{{obj.count}}</td>   
+    </tr>
+  </table>
+
+  <br><br>
+
+  <h2>Detail</h2>
+  <table border="1" width="500">
+    <tr><td></td><td>药名</td><td>用量</td></tr>  
+    <tr ng-repeat="obj in detail">
+      <td>&nbsp; {{$index+1}} &nbsp; </td>
+      <td>{{obj.medicine_name}}</td>
+      <td>{{obj.count}}</td>   
+    </tr>
+  </table>
+       
+  
+<script type="text/javascript">
+  var inputApp = angular.module('inputApp', []);
+
+  function Ctrl($scope) {
+
+    $scope.dummy = "will";
+
+    $scope.allRecipeFiles = [];
+    $scope.allRecipe = [];
+    $scope.detail = [];
+    $scope.summary = [];
+    
+
+    $scope.getAllRecipeFile = function(){
+      // 读入目录下全部文件 。
+      var files = fs.readdirSync("./data");
+      var recipeFiles = [];
+      // 筛选出 json 文件
+      files.forEach(function(fileName, index) {
+        if( ".json" === path.extname(fileName) ){
+          if( "allMedicine.json" === fileName ){
+            console.log("Ignore " + fileName);
+          }else{
+            recipeFiles.push(fileName);
+          }
+        }
+        console.log( recipeFiles );
+      });
+
+      return recipeFiles;
+    };
+
+    $scope.go_detail = function(){
+      var files = $scope.allRecipeFiles;
+      $scope.detail = [];
+      $scope.allRecipe = [];
+
+      // 读入所有 处方 文件内容。
+      for(var i=0; i<files.length; i++ ){
+        console.log(files[i]);
+        var  Recipe_json = readFileToJson("./data/" + files[i]);
+        $scope.allRecipe.push(Recipe_json);
+
+        console.log(Recipe_json.recipe.items);
+        items = Recipe_json.recipe.items;
+        for( var j=0; j<items.length; j++ ){
+          var temp_obj = {};
+          temp_obj.medicine_name = items[j].medicine_name;
+          temp_obj.count = items[j].count;
+          
+          $scope.detail.push(temp_obj);
+        }
+      }
+    };
+
+    $scope.go_summary = function(){
+      var temp_obj = _.groupBy($scope.detail, function(obj){ return obj.medicine_name; });
+
+      var all_val = _.values(temp_obj);
+
+      for(i=0;i<all_val.length;i++){
+        var obj2 = all_val[i];
+        var sum = _.reduce(obj2, function(memo, num){ return memo + num.count; }, 0);
+        console.log(sum);
+        var obj3 = {};
+        obj3.medicine_name = obj2[0].medicine_name;
+        obj3.count = sum;
+        $scope.summary.push(obj3);
+      }
+      //$scope.summary = [];
+      console.log(temp_obj);
+    }
+
+    // 读入所有 处方 信息
+    $scope.allRecipeFiles = $scope.getAllRecipeFile();
+  }
+  
+  
+  debug_flag = 0;
+
+  var login_flag = prompt("请输入密码");
+  if( "frtabc" === login_flag ){
+    console.log("密码正确");
+  }else{
+    console.log("密码错误");
+    window.location.href = "cashier.html";
+  }
+
+  
+
+  </script>
+</body>
+</html>
+
+
+
+
