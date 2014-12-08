@@ -195,9 +195,21 @@
     };
 
     $scope.go_save = function(){
-      // TODO:保存到文件中
-
-      $scope.data.recipe.items = [];
+      
+      if( isblank($scope.data.case_no) ){
+        alert("请输入门诊号");
+        obj = document.getElementById( 'id_case_no' );
+        obj.focus();
+        obj.select();
+        return false;
+      }else{
+        var strFileName = $scope.data.case_no;
+        var aStr = JSON.stringify($scope.data);
+         console.log( "$scope.datas = ###" + aStr + "###" );
+        // Write a file:
+        fs.writeFileSync( "data/" + strFileName + ".json", aStr);
+        window.print();
+      }
     };
     
     $scope.go_clear = function(){
