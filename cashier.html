@@ -31,7 +31,7 @@
     年龄:     <input  type="number"  id="id_4"   ng-model="newdata.case.age"     style="width:30px"    />
   </div>
 -->
-  门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case_no"   style="width:100px"  required ng-trim="true" />
+  门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case_no"  ng-blur="go_case_no()" style="width:100px"  required ng-trim="true" />
   <table border="1"><tr>   
     <td> 
       <div >   处方：    
@@ -45,12 +45,12 @@
             <td>{{obj.unit}}</td>
             <td>{{obj.price}}</td>
             <td>{{obj.xiaoji}}</td>
-            <td><input type="button" ng-click="goDel( $index )" ng-hide="datas.isUpload" value=" 删除 "> </td>
+            <td><input type="button" ng-click="goDel( $index )"  value=" 删除 "> </td>
           </tr>
          
         </table>
         <br>
-        助记码：<input  type="text"  id="id_0"   ng-model="zjm"  ng-blur="go_zjm()"   style="width:35px" />
+        助记码：<input  type="text"  id="id_0"   ng-model="zjm"  ng-change="go_zjm()"   style="width:35px" />
           
         药品名称：
           <input  type="text" ng-model="fields.medicine_name" style="width:80px" readonly >
@@ -63,7 +63,7 @@
             <td>{{medi.short_name}}</td>
             <td>{{medi.medicine_name}}</td>
             <td>{{medi.price}}</td>
-            
+            <td><input type="button" ng-click="go_set( medi )"  value=" 选择 "></td>
           </tr>
         </table>
       抓药数量(付数)：<input  type="text"  id="id_suitcount"   ng-model="data.suitcount"      style="width:75px"    required  ng-trim="true" />
@@ -145,7 +145,7 @@
 
       obj = document.getElementById( 'id_0' );
       obj.focus();
-      //obj.select();
+      obj.select();
     }
 
     // 计算药价
@@ -218,6 +218,21 @@
       $scope.data.sumprice = 0;
     };
 
+    $scope.go_set = function(med){
+      $scope.fields.medicine_name = med.medicine_name;
+      var elem = document.getElementById( 'id_1' );
+      elem.focus();
+    };
+
+    $scope.go_case_no = function(){
+      var case_no = $scope.data.case_no;
+      var filename = "./data/" + case_no + ".json";
+      if( fs.existsSync( filename) ){
+        $scope.data = readFileToJson(filename);
+      }
+    };
+
+
     $scope.go_zjm = function(){
       
       var str_zjm = $scope.zjm;
@@ -226,9 +241,9 @@
       if( temp_array.length > 0 ){
         console.log(temp_array[0].medicine_name);
         $scope.fields.medicine_name = temp_array[0].medicine_name;
-        $scope.zjm = "";
+        //$scope.zjm = "";
       }
-      console.log(temp_array);
+      //console.log(temp_array);
     };
 
     $scope.condition_zjm = function(value){
