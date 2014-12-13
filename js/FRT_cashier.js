@@ -147,9 +147,7 @@ document.onkeydown = function(event) {
           console.log(obj.type );
           if(obj.type === "text"){
           	obj.select();
-          }
-          
-          
+          } 
         }
         else{
           console.log("not input." );

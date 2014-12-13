@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>福润堂 药品编辑</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script type="text/javascript" src="lib/angular.js"></script>
+  <script type="text/javascript" src="js/FRT_cashier.js"></script>
+  <style type="text/css">
+    input.ng-invalid.ng-dirty, input.ng-invalid.ng-invalid {
+      background-color: yellow;
+    }
+  </style>
+  
+</head>
+<body ng-app="inputApp" ng-controller="Ctrl">
+  <span id='debug_area' style='display:none;'> 开发人员专用区域，按  `  键(ESC键下面那个键)，就可隐藏。  
+    
+    <input type="button" id="id_fill" value=" 测试: 填充数据 " ng-click="test_fill()"  />
+  </span>
+
+  <h1 style="">福润堂</h1> 
+  <h2>药品编辑</h2>
+  <div style="float:left;width:55%;">
+    搜索：<input  type="text"    ng-model="key_word"  style="width:200px" />
+    <input  type="button"      value=" 新 增 药 品 " ng-click="go_new()"  style="float:right;" />
+        <table width="100%" border="">
+          <tr><th>助记码</th><th>药品名称</th><th>单价</th><th></th></tr>
+          <tr ng-repeat="medi in allMedicine| filter:key_word | limitTo:10 ">
+            <td>{{medi.short_name}}</td>
+            <td>{{medi.medicine_name}}</td>
+            <td>{{medi.price}}</td>
+            <td><input type="button" ng-click="go_edit( medi )"  value=" 编辑 "></td>
+          </tr>
+        </table>
+      </div>
+<div class='to_top' style="width:40%;" ng-show="edit_area" >
+    <h3 style="">编辑药品信息</h3>
+    
+    名 称 :     <input  type="text" id="id_1"  ng-model="fields.medicine_name"  required /> <br/>
+    助 记 码 :     <input  type="text" id="id_2"  ng-model="fields.short_name"  required /> <br/>
+    单价:(元/克)<input  type="text" id="id_3"  ng-model="fields.price" required/> <br/>
+    
+    <input type="button" value=" 保 存 "  ng-click="saveBooking()"  /> 
+    <input type="button" value=" 取 消 "  ng-click="hideEdit()" style="float:right;" />
+    
+</div>
+
+  
+<script type="text/javascript">
+  var inputApp = angular.module('inputApp', []);
+
+  function Ctrl($scope) {
+
+    $scope.dummy = "will";
+    $scope.key_word = "";
+    $scope.edit_area = false;
+    
+    
+    $scope.fields = {};
+    $scope.fields.id = "";
+    $scope.fields.medicine_name = "";
+    $scope.fields.short_name = "";
+    $scope.fields.price = "";
+    
+    var tempObj = {"medicine_name":"","short_name":"1","price":"0.0"};
+
+    $scope.save_med = function(){
+      // 检查输入是否正确
+      if( isblank($scope.fields.medicine_name) ){
+        alert("请输入药品名称");
+        obj = document.getElementById( 'id_0' );
+        obj.focus();
+        return false;
+      }
+      if( isblank($scope.fields.count) ){
+        alert("请输入药品数量");
+        obj = document.getElementById( 'id_1' );
+        obj.focus();
+        obj.select();
+        return false;
+      }
+      else if( $scope.fields.count <= 0 ){
+        alert("药品数量应该大于0");
+        obj = document.getElementById( 'id_1' );
+        obj.focus();
+        obj.select();
+        return false;
+      }  
+    }
+
+    $scope.go_edit = function(med){
+      $scope.fields.id = med.id;
+      $scope.fields.medicine_name = med.medicine_name;
+      $scope.fields.short_name = med.short_name;
+      $scope.fields.price = med.price;
+      $scope.edit_area = true;
+    };
+
+    $scope.go_new = function(){
+      $scope.fields.id = "";
+      $scope.fields.medicine_name = "";
+      $scope.fields.short_name = "";
+      $scope.fields.price = "";
+      $scope.edit_area = true;
+    };
+
+    $scope.hideEdit = function(){
+      $scope.edit_area = false;
+    };
+
+   
+
+    $scope.getAllMedicine = function(){
+      var  Medicine_json = readFileToJson("./data/allMedicine.json");
+      //console.log(Medicine_json);
+      return Medicine_json;
+    };
+
+    // 读入所有 药物 信息
+    $scope.allMedicine = $scope.getAllMedicine();
+    //console.log(" len:" + $scope.allMedicine.length);
+    //console.log($scope.allMedicine[0]);
+
+
+
+    $scope.test_fill = function(){
+
+      $scope.data.recipe.items[0] = _.clone($scope.allMedicine[10]);
+      $scope.data.recipe.items[0].count = 7;
+      $scope.data.recipe.items[0].unit = "克"
+      $scope.data.recipe.items[0].price = "";
+
+      
+      $scope.data.suitcount = 3;
+    };
+  }
+
+  debug_flag = 0;
+
+  
+
+  </script>
+</body>
+</html>
+
+
+
+

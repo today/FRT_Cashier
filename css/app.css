@@ -28,7 +28,27 @@ hr {
 
 input[disabled]
 {
-
   color: #CCCCCC;
-  
+}
+
+.to_top {
+	float: right;/*在右*/             
+    margin: 5px 5px 5px 5px;
+    padding: 10px;
+    border: 1px solid silver;
+           
+    box-shadow: 0px 0px 5px #000;
+    -moz-box-shadow: 0px 0px 5px #000;
+    -webkit-box-shadow: 0px 0px 5px #000;
+
+    top:1;/*最上*/             
+    color: #3E3E3E;
+    right: 0;
+    position: fixed;
+    text-align: left;
+    width: 35%;
+    z-index: 10000;
+    _position:absolute; /* for IE6 */
+    _top: expression(documentElement.scrollTop + documentElement.clientHeight-this.offsetHeight); /* for IE6 */
+    overflow:visible;
 }
