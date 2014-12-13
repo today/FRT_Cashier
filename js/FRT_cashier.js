@@ -41,7 +41,7 @@ function getYMD_no_dash( aDate ){
 
 
 function makeBlankLine(aDate){
-	var obj = new Object();
+	var obj = {};
 	
 	obj.treat_date = getYMD( aDate );
 	obj.patient_no =  "0";
@@ -62,7 +62,7 @@ function appendToJsonFile( filename, aJsonObj ){
     var jsonObj = JSON.parse(fileStr);
 
     // 将内容append为最后一个成员
-    jsonObj.push(aJsonObj)
+    jsonObj.push(aJsonObj);
 
 	var jsonStr = JSON.stringify(jsonObj);
 	fs.writeFileSync( filename, jsonStr);
@@ -71,7 +71,7 @@ function appendToJsonFile( filename, aJsonObj ){
 /*  读文件并且转为Json返回   */
 function readFileToJson( filename ){
 	
-	aJson = "{'runResult':'start run.'}"
+	aJson = "{'runResult':'start run.'}";
 	if(fs.existsSync( filename) ){
 		var strFileContent = fs.readFileSync(filename);   
 		//console.log("getBooking(): " + strBookingList);
@@ -88,7 +88,7 @@ document.onkeydown = function(event) {
     // 这一段是用来显示隐藏debug区的。
     if (keynum==192){
       
-      if( debug_flag == 0 ){
+      if( debug_flag === 0 ){
         debug_flag++;
       }else if(debug_flag == 1 ){
         debug_flag++;
@@ -103,7 +103,7 @@ document.onkeydown = function(event) {
     }
     else if (keynum==27){
       
-      if( debug_flag == 0 ){
+      if( debug_flag === 0 ){
         debug_flag++;
       }else if(debug_flag == 1 ){
         debug_flag++;
@@ -127,7 +127,7 @@ document.onkeydown = function(event) {
         if( temp_id ){
           var str_id = temp_id.substring(3); 
           //console.log("id:" , str_id );
-          var i_id = new Number(str_id);
+          var i_id = parseInt(str_id);
 
           while ( skip_num < 5 ){  // allow skip num , 
             
@@ -142,11 +142,11 @@ document.onkeydown = function(event) {
           }
           
           // loop to 0
-          obj = document.getElementById( 'id_0' );
-          obj.focus();
-          console.log(obj.type );
-          if(obj.type === "text"){
-          	obj.select();
+          var obj2 = document.getElementById( 'id_0' );
+          obj2.focus();
+          console.log(obj2.type );
+          if(obj2.type === "text"){
+          	obj2.select();
           } 
         }
         else{

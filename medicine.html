@@ -88,7 +88,7 @@
         obj.select();
         return false;
       }  
-    }
+    };
 
     $scope.go_edit = function(med){
       $scope.fields.id = med.id;
@@ -129,7 +129,7 @@
 
       $scope.data.recipe.items[0] = _.clone($scope.allMedicine[10]);
       $scope.data.recipe.items[0].count = 7;
-      $scope.data.recipe.items[0].unit = "克"
+      $scope.data.recipe.items[0].unit = "克";
       $scope.data.recipe.items[0].price = "";
 
       
