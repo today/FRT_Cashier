@@ -25,10 +25,10 @@
   <br>
   <!--
   <div>
-    病历号:   <input  type="text" id="id_0"  ng-model="fields.patient_no"   style="width:100px"  required ng-trim="true" />
-    姓名:     <input  type="text" id="id_2"  ng-model="fields.patient_name" style="width:60px"   /> 
-    性别:     <input  type="text"    id="id_3"   ng-model="newdata.case.sex"     style="width:20px"    />
-    年龄:     <input  type="number"  id="id_4"   ng-model="newdata.case.age"     style="width:30px"    />
+    病历号:   <input  type="text"   ng-model="fields.patient_no"   style="width:100px"  required ng-trim="true" />
+    姓名:     <input  type="text"   ng-model="fields.patient_name" style="width:60px"   /> 
+    性别:     <input  type="text"       ng-model="newdata.case.sex"     style="width:20px"    />
+    年龄:     <input  type="number"     ng-model="newdata.case.age"     style="width:30px"    />
   </div>
 -->
   门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case_no"  ng-blur="go_case_no()" style="width:100px"  required ng-trim="true" />
@@ -70,17 +70,22 @@
       <input type="button" value=" 计价 "   ng-click="go_calc()"   />
         
       </td>
-    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>    
-    <td >
+    <td>&nbsp;&nbsp;&nbsp;</td>    
+    <td width="30%">
       <h2>
       单付价格：{{data.suitprice}}
         
         <br><br>
         总价：{{data.sumprice}}
+        </h2>
+        <h3>
+        <br><br>
+        支付方式： <input type="radio" name="pay_type" ng-model="data.pay_type"  value="vip_card"> 会员卡 
+        <input type="radio" name="pay_type" ng-model="data.pay_type"  value="cash"> 现金 
         <br><br>
         <input type="button" value=" 打印 & 结帐 "   ng-click="go_save()"   />
         <input type="button" value=" 撤销 & 清除 "   ng-click="go_clear()"   />
-        </h2>
+        </h3>
         
     </td>
   </tr>
