@@ -38,15 +38,21 @@
   <br><br>
 
   <h2>Detail</h2>
-  <table border="1" width="500">
-    <tr><td></td><td>药名</td><td>用量</td></tr>  
-    <tr ng-repeat="obj in detail">
-      <td>&nbsp; {{$index+1}} &nbsp; </td>
-      <td>{{obj.medicine_name}}</td>
-      <td>{{obj.count}}</td>   
-    </tr>
-  </table>
-       
+  <div ng-repeat="recipe in allRecipe">
+    <table border="1" width="500">
+      <tr>
+        <td colspan="3"> 
+        姓名：   性别：   门诊号：{{recipe.case_no}} 金额：{{recipe.sumprice}}
+        </td></tr> 
+      <tr><td></td><td>药名</td><td>用量</td></tr>  
+      <tr ng-repeat="obj in recipe.recipe.items">
+        <td>&nbsp; {{$index+1}} &nbsp; </td>
+        <td>{{obj.medicine_name}}</td>
+        <td>{{obj.count}}</td>   
+      </tr>
+    </table>
+    <br>
+  </div>     
   
 <script type="text/javascript">
   var inputApp = angular.module('inputApp', []);
