@@ -26,12 +26,14 @@
   <input type="button" value=" 第一步：装入数据 "   ng-click="go_detail()"   />
   <input type="button" value=" 第二步：计算汇总 "   ng-click="go_summary()"   />
   <h2>Summary</h2>
+  <h3>总价：{{total}}</h3>
   <table border="1" width="500">
-    <tr><td></td><td>药名</td><td>用量</td></tr>  
+    <tr class='txt_center'><td></td><td>药名</td><td>用量</td><td>小计</td></tr>  
     <tr ng-repeat="obj in summary">
       <td>&nbsp; {{$index+1}} &nbsp; </td>
       <td>{{obj.medicine_name}}</td>
-      <td>{{obj.count}}</td>   
+      <td class='txt_right'>{{obj.count}}</td>   
+      <td class='txt_right'>{{obj.price}}</td>
     </tr>
   </table>
 
@@ -65,6 +67,7 @@
     $scope.allRecipe = [];
     $scope.detail = [];
     $scope.summary = [];
+    $scope.total = 0;
     
 
     $scope.getAllRecipeFile = function(){
@@ -103,6 +106,7 @@
           var temp_obj = {};
           temp_obj.medicine_name = items[j].medicine_name;
           temp_obj.count = items[j].count;
+          temp_obj.price = items[j].price;
           
           $scope.detail.push(temp_obj);
         }
@@ -110,21 +114,25 @@
     };
 
     $scope.go_summary = function(){
-      var temp_obj = _.groupBy($scope.detail, function(obj){ return obj.medicine_name; });
+      var temp_obj_count = _.groupBy($scope.detail, function(obj){ return obj.medicine_name; });
 
-      var all_val = _.values(temp_obj);
+      var all_count = _.values(temp_obj_count);
 
-      for(i=0;i<all_val.length;i++){
-        var obj2 = all_val[i];
+      for(i=0;i<all_count.length;i++){
+        var obj2 = all_count[i];
         var sum = _.reduce(obj2, function(memo, num){ return memo + num.count; }, 0);
-        //console.log(sum);
+        
+        //console.log(JSON.stringify(obj2));
         var obj3 = {};
         obj3.medicine_name = obj2[0].medicine_name;
         obj3.count = sum;
+        obj3.price = (sum * obj2[0].price).toFixed(2) ;
         $scope.summary.push(obj3);
       }
-      //$scope.summary = [];
-      //console.log(temp_obj);
+      
+      
+      var tatal = _.reduce($scope.summary, function(memo, num){ return memo + parseFloat(num.price); }, 0);
+      $scope.total = tatal.toFixed(2);
     };
 
     // 读入所有 处方 信息
