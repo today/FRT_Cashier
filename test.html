@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+  
   <title>测试页</title>
  
-  
 </head>
 <body>
 
@@ -22,6 +22,48 @@ GET:
       <input type="submit" value="  O K  ">
 
   </form>
+
+<script type="text/javascript">
+
+
+// 更简单直接的方法是，在地址栏输入   nw:version  
+var version_txt = process.versions['node-webkit'];
+console.log(version_txt);  
+
+
+// 下面这部分代码，演示了如何添加 MENU 元素到 APP 中。有这些功能，写的APP就更像本地程序了。
+//  http://code.tutsplus.com/tutorials/introduction-to-html5-desktop-apps-with-node-webkit--net-36296
+var gui = require("nw.gui");
+
+var menu = new gui.Menu({ type: 'menubar' });
+menu.append(new gui.MenuItem({
+  label: 'File',
+  submenu: new gui.Menu()
+}));
+
+menu.items[0].submenu.append(new gui.MenuItem({
+  label: 'New', 
+  click: function () {
+    gui.Window.open('index.html');
+  }
+}));
+
+  menu.items[0].submenu.append(new gui.MenuItem({
+    type: 'separator'
+  }));
+
+  menu.items[0].submenu.append(new gui.MenuItem({
+    label: 'Close',
+    click: function () {
+      gui.Window.get().close();
+    }
+  }));
+
+gui.Window.get().menu = menu;
+
+</script>
+
+
   
 </body>
 </html>
