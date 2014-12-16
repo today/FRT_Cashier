@@ -207,6 +207,10 @@
         obj.focus();
         obj.select();
         return false;
+      }else if( isblank($scope.data.pay_type) ){
+        alert("请选择付款方式");
+        
+        return false;
       }else{
         var strFileName = $scope.data.case_no;
         var aStr = JSON.stringify($scope.data);
