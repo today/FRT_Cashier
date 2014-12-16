@@ -34,19 +34,19 @@
             <td><input type="button" ng-click="go_edit( medi )"  value=" 编辑 "></td>
           </tr>
         </table>
+        <br>
+        <input type="button" ng-click="go_export()"  value=" 生成新价目表 ">
       </div>
 <div class='to_top' style="width:40%;" ng-show="edit_area" >
     <h3 style="">编辑药品信息</h3>
     
-    名 称 :     <input  type="text" id="id_1"  ng-model="fields.medicine_name"  required /> <br/>
-    助 记 码 :     <input  type="text" id="id_2"  ng-model="fields.short_name"  required /> <br/>
-    单价:(元/克)<input  type="text" id="id_3"  ng-model="fields.price" required/> <br/>
+    名 称 :      <input  type="text" id="id_1"  ng-model="fields.medicine_name"  required /> <br/>
+    助 记 码 :   <input  type="text" id="id_2"  ng-model="fields.short_name"  required /> <br/>
+    单价:(元/克) <input  type="text" id="id_3"  ng-model="fields.price" required/> <br/>
     
     <input type="button" value=" 保 存 "  ng-click="saveBooking()"  /> 
     <input type="button" value=" 取 消 "  ng-click="hideEdit()" style="float:right;" />
-    
 </div>
-
   
 <script type="text/javascript">
   var inputApp = angular.module('inputApp', []);
@@ -110,7 +110,24 @@
       $scope.edit_area = false;
     };
 
-   
+    $scope.go_export = function(){
+      var sqlite3 = require('sqlite3').verbose();
+      var db = new sqlite3.Database('data/frt.db');
+
+      db.serialize(function() {
+        db.run("CREATE TABLE lorem (info TEXT)");
+
+        var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+        for (var i = 0; i < 10; i++) {
+            stmt.run("Ipsum " + i);
+        }
+        stmt.finalize();
+
+        db.each("SELECT rowid AS id, info FROM lorem", function(err, row) {
+            console.log(row.id + ": " + row.info);
+        });
+      });
+    };
 
     $scope.getAllMedicine = function(){
       var  Medicine_json = readFileToJson("./data/allMedicine.json");
@@ -120,9 +137,6 @@
 
     // 读入所有 药物 信息
     $scope.allMedicine = $scope.getAllMedicine();
-    //console.log(" len:" + $scope.allMedicine.length);
-    //console.log($scope.allMedicine[0]);
-
 
 
     $scope.test_fill = function(){

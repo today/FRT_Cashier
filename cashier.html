@@ -110,7 +110,7 @@
     $scope.data.suitcount = "";
     $scope.data.sumprice = 0;
 
-    var tempObj = {"medicine_name":"药材","count":"1","unit":"克","price":"0.0","xiaoji":"0.0"}
+    var tempObj = {"medicine_name":"药材","count":"1","unit":"克","price":"0.0","xiaoji":"0.0"};
 
     $scope.save = function(){
       // 检查输入是否正确
@@ -151,7 +151,7 @@
       obj = document.getElementById( 'id_0' );
       obj.focus();
       obj.select();
-    }
+    };
 
     // 计算药价
     $scope.go_calc = function(){ 
@@ -180,7 +180,7 @@
       $scope.data.suitprice = 0;
       for( var i=0; i<$scope.data.recipe.items.length; i++){
         var item = $scope.data.recipe.items[i];
-        var name = item.medicine_name
+        var name = item.medicine_name;
         var tempObj = _.findWhere($scope.allMedicine, {medicine_name: name});
         //console.log(tempObj);
         item.price = tempObj.price;
@@ -192,11 +192,11 @@
       
       $scope.data.sumprice = ($scope.data.suitprice * $scope.data.suitcount).toFixed(2);
       
-    }
+    };
 
     $scope.goDel = function( index ){
       $scope.data.recipe.items[index] = null;
-      $scope.data.recipe.items = _.compact($scope.data.recipe.items) 
+      $scope.data.recipe.items = _.compact($scope.data.recipe.items);
     };
 
     $scope.go_save = function(){
@@ -255,10 +255,10 @@
       var str_a = value.short_name.toUpperCase();
       //console.log(typeof($scope.zjm));
       var str_b = $scope.zjm.toUpperCase();
-      if(str_b == ""){
+      if(str_b === ""){
         return false;
       }
-      else if(str_a.indexOf(str_b)==0 ){
+      else if(str_a.indexOf(str_b)===0 ){
         return true;
       }
       else{
@@ -280,7 +280,7 @@
     $scope.medicine_list = [];
     for( var i=0; i<$scope.allMedicine.length; i++ ){
       var obj = $scope.allMedicine[i];
-      medic = new Object();
+      medic = {};
       medic.key = obj.medicine_name;
       medic.value = obj.short_name + "-" + obj.medicine_name;
       //console.log(typeof(medic));
@@ -292,17 +292,17 @@
 
       $scope.data.recipe.items[0] = _.clone($scope.allMedicine[10]);
       $scope.data.recipe.items[0].count = 7;
-      $scope.data.recipe.items[0].unit = "克"
+      $scope.data.recipe.items[0].unit = "克";
       $scope.data.recipe.items[0].price = "";
 
       $scope.data.recipe.items[1] = _.clone($scope.allMedicine[11]);
       $scope.data.recipe.items[1].count = 9;
-      $scope.data.recipe.items[1].unit = "克"
+      $scope.data.recipe.items[1].unit = "克";
       $scope.data.recipe.items[1].price = "";
 
       $scope.data.recipe.items[2] = _.clone($scope.allMedicine[13]);
       $scope.data.recipe.items[2].count = 11;
-      $scope.data.recipe.items[2].unit = "克"
+      $scope.data.recipe.items[2].unit = "克";
       $scope.data.recipe.items[2].price = "";
       
       $scope.data.suitcount = 3;
