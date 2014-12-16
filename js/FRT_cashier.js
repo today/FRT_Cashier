@@ -3,6 +3,7 @@ var _ = require('underscore');
 
 var fs = require('fs');
 var path = require('path');
+var mysql = require('mysql');
 
 
 function isblank(strA){
@@ -71,10 +72,10 @@ function appendToJsonFile( filename, aJsonObj ){
 /*  读文件并且转为Json返回   */
 function readFileToJson( filename ){
 	
-	aJson = "{'runResult':'start run.'}";
+	aJson = "";
 	if(fs.existsSync( filename) ){
 		var strFileContent = fs.readFileSync(filename);   
-		//console.log("getBooking(): " + strBookingList);
+		//console.log(strFileContent.lenght + "xxx");
 	    aJson = JSON.parse(strFileContent);
 	}
 	return aJson;

@@ -35,6 +35,9 @@
           </tr>
         </table>
         <br>
+        <h3 ng-show="data_darty" style="color:red;"> 药品价格已修改，离开本页面前，请点击后面按钮更新价格。 </h3>
+        <h3 ng-show="start_export" style="color:blue;"> 开始生成新价目表，请等待。 </h3>
+        <h3 ng-show="data_reload" style="color:blue;"> 新价目表已经生成。请刷新页面。 </h3>
         <input type="button" ng-click="go_export()"  value=" 生成新价目表 ">
       </div>
 <div class='to_top' style="width:40%;" ng-show="edit_area" >
@@ -42,13 +45,14 @@
     
     名 称 :      <input  type="text" id="id_1"  ng-model="fields.medicine_name"  required /> <br/>
     助 记 码 :   <input  type="text" id="id_2"  ng-model="fields.short_name"  required /> <br/>
-    单价:(元/克) <input  type="text" id="id_3"  ng-model="fields.price" required/> <br/>
+    单价:(元/克) <input  type="number" id="id_3"  ng-model="fields.price" required/> <br/>
     
-    <input type="button" value=" 保 存 "  ng-click="saveBooking()"  /> 
+    <input type="button" value=" 保 存 "  ng-click="save_medicine()"  /> 
     <input type="button" value=" 取 消 "  ng-click="hideEdit()" style="float:right;" />
 </div>
   
 <script type="text/javascript">
+  
   var inputApp = angular.module('inputApp', []);
 
   function Ctrl($scope) {
@@ -56,6 +60,9 @@
     $scope.dummy = "will";
     $scope.key_word = "";
     $scope.edit_area = false;
+    $scope.data_darty = false;
+    $scope.data_reload = false;
+    $scope.start_export = false;
     
     
     $scope.fields = {};
@@ -66,28 +73,86 @@
     
     var tempObj = {"medicine_name":"","short_name":"1","price":"0.0"};
 
-    $scope.save_med = function(){
+    $scope.save_medicine = function(){
       // 检查输入是否正确
       if( isblank($scope.fields.medicine_name) ){
         alert("请输入药品名称");
-        obj = document.getElementById( 'id_0' );
-        obj.focus();
-        return false;
-      }
-      if( isblank($scope.fields.count) ){
-        alert("请输入药品数量");
         obj = document.getElementById( 'id_1' );
         obj.focus();
         obj.select();
         return false;
       }
-      else if( $scope.fields.count <= 0 ){
-        alert("药品数量应该大于0");
-        obj = document.getElementById( 'id_1' );
+      if( isblank($scope.fields.short_name) ){
+        alert("请输入助记码");
+        obj = document.getElementById( 'id_2' );
         obj.focus();
         obj.select();
         return false;
-      }  
+      }
+      else if( isblank($scope.fields.price)  ){
+        alert("请输入单价");
+        obj = document.getElementById( 'id_3' );
+        obj.focus();
+        obj.select();
+        return false;
+      }
+
+      $scope.data_darty = true;
+      // 开始操作数据库
+
+      var insertSQL = 'insert into t_medicine(medicine_name, short_name, price ) values(?,?,?)';
+      var updateSQL = 'update t_medicine set medicine_name=?, short_name=?, price=? where id=?';
+
+      var mysql = require('mysql');
+      var conn = getConn();
+      conn.connect();
+
+      if( isblank($scope.fields.id) ){
+          var param1 = [];
+          param1.push($scope.fields.medicine_name);
+          param1.push($scope.fields.short_name);
+          param1.push($scope.fields.price);
+
+          conn.query(insertSQL,param1, function (err1, res1) {
+            if (err1) console.log(err1);
+              console.log("INSERT Return ==> ");
+              console.log(res1);
+          });
+      }else{
+          var param2 = [];
+          param2.push($scope.fields.medicine_name);
+          param2.push($scope.fields.short_name);
+          param2.push($scope.fields.price);
+          param2.push($scope.fields.id);
+
+          conn.query(updateSQL,param2, function (err1, res1) {
+            if (err1) console.log(err1);
+              console.log("INSERT Return ==> ");
+              console.log(res1);
+          });
+      }
+      
+      conn.end();
+    };
+
+    $scope.go_export = function(){
+      $scope.start_export = true;
+      var Medicine_json = "";
+      var conn = getConn();
+      conn.connect();
+      conn.query('SELECT * from t_medicine order by short_name ', function(err, rows, fields) {
+          if (err) throw err;
+          
+          Medicine_json = JSON.stringify(rows) ;
+          fs.writeFileSync( "data/allMedicine.json", Medicine_json );
+          $scope.data_darty = false;
+          $scope.data_reload = true;
+          $scope.start_export = false;
+          $scope.$apply();
+          //console.log(Medicine_json);
+      });
+      conn.end();
+      
     };
 
     $scope.go_edit = function(med){
@@ -108,25 +173,6 @@
 
     $scope.hideEdit = function(){
       $scope.edit_area = false;
-    };
-
-    $scope.go_export = function(){
-      var sqlite3 = require('sqlite3').verbose();
-      var db = new sqlite3.Database('data/frt.db');
-
-      db.serialize(function() {
-        db.run("CREATE TABLE lorem (info TEXT)");
-
-        var stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-        for (var i = 0; i < 10; i++) {
-            stmt.run("Ipsum " + i);
-        }
-        stmt.finalize();
-
-        db.each("SELECT rowid AS id, info FROM lorem", function(err, row) {
-            console.log(row.id + ": " + row.info);
-        });
-      });
     };
 
     $scope.getAllMedicine = function(){
@@ -153,7 +199,16 @@
 
   debug_flag = 0;
 
-  
+  var getConn = function(){
+      var conn = mysql.createConnection({
+          host: 'localhost',
+          user: 'root',
+          password: '',
+          database:'frt',
+          port: 3306
+      });
+      return conn;
+  };
 
   </script>
 </body>
