@@ -52,3 +52,16 @@ input[disabled]
     _top: expression(documentElement.scrollTop + documentElement.clientHeight-this.offsetHeight); /* for IE6 */
     overflow:visible;
 }
+
+.txt_right {
+    text-align: right;/*在右*/  
+}
+
+.txt_center {
+    text-align: center;/*在右*/  
+}
+
+
+
+
+
