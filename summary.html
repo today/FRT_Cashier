@@ -42,7 +42,7 @@
     <table border="1" width="500">
       <tr>
         <td colspan="3"> 
-        姓名：   性别：   门诊号：{{recipe.case_no}} 金额：{{recipe.sumprice}}
+        姓名：   性别：   门诊号：{{recipe.case_no}} 金额：{{recipe.sumprice}} 付款方式：{{recipe.pay_type}}
         </td></tr> 
       <tr><td></td><td>药名</td><td>用量</td></tr>  
       <tr ng-repeat="obj in recipe.recipe.items">
@@ -69,7 +69,7 @@
 
     $scope.getAllRecipeFile = function(){
       // 读入目录下全部文件 。
-      var files = fs.readdirSync("./data");
+      var files = fs.readdirSync("./data/recipe");
       var recipeFiles = [];
       // 筛选出 json 文件
       files.forEach(function(fileName, index) {
@@ -80,7 +80,7 @@
             recipeFiles.push(fileName);
           }
         }
-        console.log( recipeFiles );
+        //console.log( recipeFiles );
       });
 
       return recipeFiles;
@@ -93,11 +93,11 @@
 
       // 读入所有 处方 文件内容。
       for(var i=0; i<files.length; i++ ){
-        console.log(files[i]);
-        var  Recipe_json = readFileToJson("./data/" + files[i]);
+        //console.log(files[i]);
+        var  Recipe_json = readFileToJson("./data/recipe/" + files[i]);
         $scope.allRecipe.push(Recipe_json);
 
-        console.log(Recipe_json.recipe.items);
+        //console.log(Recipe_json.recipe.items);
         items = Recipe_json.recipe.items;
         for( var j=0; j<items.length; j++ ){
           var temp_obj = {};
@@ -117,7 +117,7 @@
       for(i=0;i<all_val.length;i++){
         var obj2 = all_val[i];
         var sum = _.reduce(obj2, function(memo, num){ return memo + num.count; }, 0);
-        console.log(sum);
+        //console.log(sum);
         var obj3 = {};
         obj3.medicine_name = obj2[0].medicine_name;
         obj3.count = sum;

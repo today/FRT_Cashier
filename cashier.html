@@ -212,7 +212,7 @@
         var aStr = JSON.stringify($scope.data);
          console.log( "$scope.datas = ###" + aStr + "###" );
         // Write a file:
-        fs.writeFileSync( "data/" + strFileName + ".json", aStr);
+        fs.writeFileSync( "./data/recipe/" + strFileName + ".json", aStr);
         window.print();
       }
     };
@@ -231,7 +231,7 @@
 
     $scope.go_case_no = function(){
       var case_no = $scope.data.case_no;
-      var filename = "./data/" + case_no + ".json";
+      var filename = "./data/recipe/" + case_no + ".json";
       if( fs.existsSync( filename) ){
         $scope.data = readFileToJson(filename);
       }
