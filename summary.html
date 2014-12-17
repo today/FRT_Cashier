@@ -27,6 +27,10 @@
   <input type="button" value=" 第二步：计算汇总 "   ng-click="go_summary()"   />
   <h2>Summary</h2>
   <h3>总价：{{total}}</h3>
+  <h3>VIP卡支付：{{VIPCard_sum}}</h3>
+  <h3>现金支付：{{Cash_sum}}</h3>
+
+
   <table border="1" width="500">
     <tr class='txt_center'><td></td><td>药名</td><td>用量</td><td>小计</td></tr>  
     <tr ng-repeat="obj in summary">
@@ -68,8 +72,11 @@
     $scope.detail = [];
     $scope.summary = [];
     $scope.total = 0;
+    $scope.VIPCard_sum = 0;
+    $scope.Cash_sum = 0;
     
 
+    // 读入所有 处方 信息   把 文件名 放在数组中
     $scope.getAllRecipeFile = function(){
       // 读入目录下全部文件 。
       var files = fs.readdirSync("./data/recipe");
@@ -89,6 +96,7 @@
       return recipeFiles;
     };
 
+    // 读所有处方文件， 取出内容，放入数组。
     $scope.go_detail = function(){
       var files = $scope.allRecipeFiles;
       $scope.detail = [];
@@ -98,6 +106,7 @@
       for(var i=0; i<files.length; i++ ){
         //console.log(files[i]);
         var  Recipe_json = readFileToJson("./data/recipe/" + files[i]);
+        // 处方内容 放入数组中
         $scope.allRecipe.push(Recipe_json);
 
         //console.log(Recipe_json.recipe.items);
@@ -108,16 +117,17 @@
           temp_obj.count = items[j].count;
           temp_obj.price = items[j].price;
           
+          // 药品内容 放入数组中
           $scope.detail.push(temp_obj);
         }
       }
     };
 
     $scope.go_summary = function(){
+
+      // 计算每种药物的用量和销售金额的 小计
       var temp_obj_count = _.groupBy($scope.detail, function(obj){ return obj.medicine_name; });
-
       var all_count = _.values(temp_obj_count);
-
       for(i=0;i<all_count.length;i++){
         var obj2 = all_count[i];
         var sum = _.reduce(obj2, function(memo, num){ return memo + num.count; }, 0);
@@ -131,11 +141,22 @@
       }
       
       
-      var tatal = _.reduce($scope.summary, function(memo, num){ return memo + parseFloat(num.price); }, 0);
-      $scope.total = tatal.toFixed(2);
+
+      // 计算 VIP卡 和 现金 的总计
+      var paytype_group = _.groupBy($scope.allRecipe, function(obj){ return obj.pay_type; });
+      var vipcard_pay = _.reduce(paytype_group.vip_card, function(memo, num){ return memo + parseFloat(num.sumprice); }, 0);
+      var cash_pay = _.reduce(paytype_group.cash, function(memo, num){ return memo + parseFloat(num.sumprice); }, 0);
+      console.log(paytype_group);
+      $scope.VIPCard_sum = vipcard_pay.toFixed(2);
+      $scope.Cash_sum = cash_pay.toFixed(2);
+
+      // 计算所有药物销售金额的 总计
+      
+      $scope.total = (parseFloat(vipcard_pay) + parseFloat(cash_pay)).toFixed(2);
+
     };
 
-    // 读入所有 处方 信息
+    // 读入所有 处方文件名   把 文件名 放在数组中
     $scope.allRecipeFiles = $scope.getAllRecipeFile();
   }
   
