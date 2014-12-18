@@ -31,10 +31,11 @@
     年龄:     <input  type="number"     ng-model="newdata.case.age"     style="width:30px"    />
   </div>
 -->
-  门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case_no"  ng-blur="go_case_no()" style="width:100px"  required ng-trim="true" />
+  <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case_no"  ng-blur="go_case_no()" style="width:100px"  required ng-trim="true" />
+  </h3>
   <table border="1"><tr>   
     <td> 
-      <div >   处方：    
+      <h3 >   处方：    
         <table border="1" width="500">
           <tr><td></td><td>药名</td><td>用量</td><td>单位</td><td>单价</td><td>小计</td><td></td></tr>  
 
@@ -57,8 +58,8 @@
 
           药品用量：<input  type="number"  id="id_1"   ng-model="fields.count"    style="width:35px"  ng-trim="true" />&nbsp;克&nbsp;
         <input type="button" id="id_2" value=" 保存 & 下一个 "   ng-click="save()"   />
-      </div>
-       <table width="100%" border="">
+      </h3>
+       <table width="100%" border="" >
           <tr ng-repeat="medi in allMedicine| filter:condition_zjm | limitTo:5 ">
             <td>{{medi.short_name}}</td>
             <td>{{medi.medicine_name}}</td>
@@ -66,27 +67,35 @@
             <td><input type="button" ng-click="go_set( medi )"  value=" 选择 "></td>
           </tr>
         </table>
-      抓药数量(付数)：<input  type="text"  id="id_suitcount"   ng-model="data.suitcount"      style="width:75px"    required  ng-trim="true" />
-      <input type="button" value=" 计价 "   ng-click="go_calc()"   />
-        
+        <br>
+        <h2 style="line-height:200%;">
+          抓药数量(付数)：<input  type="text"  id="id_suitcount"   ng-model="data.suitcount"      style="width:75px"    required  ng-trim="true" />
+
+          <input type="button" value=" 计价 "   ng-click="go_calc()"   /><br>
+          单付价格：{{data.suitprice}}
+          </h2>
       </td>
     <td>&nbsp;&nbsp;&nbsp;</td>    
-    <td width="30%">
-      <h2>
-      单付价格：{{data.suitprice}}
+    <td width="35%">
+      <h2 style="line-height:200%;">
+      
         
-        <br><br>
+        <br>
         总价：{{data.sumprice}}
-        </h2>
-        <h3>
-        <br><br>
+        
+        <br>
         支付方式： <input type="radio" name="pay_type" ng-model="data.pay_type"  value="vip_card"> 会员卡 
         <input type="radio" name="pay_type" ng-model="data.pay_type"  value="cash"> 现金 
-        <br><br>
-        <input type="button" value=" 保存 "   ng-click="go_save()"   />
+        <br>
+        收入金额： 
+        <input type="number" id="id_shouru"   ng-model="shouru" onclick="go_shouru()" style="width:80px" /><br>
+        
+        找零金额： {{ (shouru-data.sumprice).toFixed(1)}} </h2><br>
+
+        <input type="hidden" value=" 保存 "   ng-click="go_save()"   />
         <input type="button" value=" 打印 "   ng-click="go_print()"   />
-        <input type="button" value=" 撤销 & 清除 "   ng-click="go_clear()"   />
-        </h3>
+        <input type="button" value=" 清除 "   ng-click="go_clear()"   />
+        
         
     </td>
   </tr>
@@ -110,6 +119,7 @@
     $scope.data.suitprice = 0;
     $scope.data.suitcount = "";
     $scope.data.sumprice = 0;
+    $scope.shouru = 0;
 
     var tempObj = {"medicine_name":"药材","count":"1","unit":"克","price":"0.0","xiaoji":"0.0"};
 
@@ -200,6 +210,8 @@
       $scope.data.recipe.items = _.compact($scope.data.recipe.items);
     };
 
+    
+
     $scope.go_save = function(){
       
       if( isblank($scope.data.case_no) ){
@@ -232,6 +244,7 @@
       $scope.data.recipe.items = [];
       $scope.data.suitprice = 0;
       $scope.data.sumprice = 0;
+      $scope.data.zjm = "";
       $scope.data.case_no = "";
     };
 
@@ -320,6 +333,11 @@
       $scope.data.suitcount = 3;
     };
   }
+
+  var go_shouru = function( index ){
+    var obj = document.getElementById( 'id_shouru' );
+    obj.select();
+  };
   
   var obj = document.getElementById( 'id_0' );
   obj.focus();
