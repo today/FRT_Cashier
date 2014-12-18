@@ -33,7 +33,7 @@
 -->
   <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case_no"  ng-blur="go_case_no()" style="width:100px"  required ng-trim="true" />
   </h3>
-  <table border="1"><tr>   
+  <table border="0"><tr>   
     <td> 
       <h3 >   处方：    
         <table border="1" width="500">
@@ -69,18 +69,16 @@
         </table>
         <br>
         <h2 style="line-height:200%;">
+          单付价格：{{data.suitprice}}<br>
           抓药数量(付数)：<input  type="text"  id="id_suitcount"   ng-model="data.suitcount"      style="width:75px"    required  ng-trim="true" />
-
-          <input type="button" value=" 计价 "   ng-click="go_calc()"   /><br>
-          单付价格：{{data.suitprice}}
+          <input type="button" value=" 计价 "   ng-click="go_calc()"   />
+          
           </h2>
       </td>
-    <td>&nbsp;&nbsp;&nbsp;</td>    
-    <td width="35%">
+    <td width="5%">&nbsp;&nbsp;&nbsp;</td>    
+    <td width="35%" style="vertical-align:text-top;">
       <h2 style="line-height:200%;">
-      
         
-        <br>
         总价：{{data.sumprice}}
         
         <br>
@@ -147,19 +145,22 @@
       }
       
 
-      var oneObj = _.clone(tempObj);
+      var oneObj = {};
       oneObj.medicine_name = $scope.fields.medicine_name;
       oneObj.count = $scope.fields.count;
       oneObj.unit = "克";
       oneObj.price = "";
-      oneObj.xiaoji = "";
+      //oneObj.xiaoji = "";
       //oneObj.xiaoji = oneObj.price * oneObj.count;
       $scope.data.recipe.items.push(oneObj);
 
       $scope.fields.medicine_name = "";
       $scope.fields.count = "";
 
-      obj = document.getElementById( 'id_0' );
+      $scope.go_calc();
+
+      $scope.zjm = "";
+      var obj = document.getElementById( 'id_0' );
       obj.focus();
       obj.select();
     };

@@ -53,14 +53,17 @@ input[disabled]
     overflow:visible;
 }
 
-.txt_right {
-    text-align: right;/*在右*/  
+.txt_left {
+    text-align: left;
 }
 
 .txt_center {
-    text-align: center;/*在右*/  
+    text-align: center;
 }
 
+.txt_right {
+    text-align: right;
+}
 
 
 
