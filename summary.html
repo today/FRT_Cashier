@@ -48,7 +48,8 @@
     <table border="1" width="500">
       <tr>
         <td colspan="3"> 
-        姓名：   性别：   门诊号：{{recipe.case_no}} 金额：{{recipe.sumprice}} 付款方式：{{recipe.pay_type}}
+        序号：{{$index+1}}  &nbsp;&nbsp;姓名：   性别：   
+        门诊号：{{recipe.case_no}} 金额：{{recipe.sumprice}} 付款方式：{{recipe.pay_type}}
         </td></tr> 
       <tr><td></td><td>药名</td><td>用量</td></tr>  
       <tr ng-repeat="obj in recipe.recipe.items">
@@ -58,8 +59,9 @@
       </tr>
     </table>
     <br>
-  </div>     
-  
+  </div>  
+
+
 <script type="text/javascript">
   var inputApp = angular.module('inputApp', []);
 
@@ -76,17 +78,20 @@
     $scope.Cash_sum = 0;
     
 
-    // 读入所有 处方 信息   把 文件名 放在数组中
+    // 读入所有 处方 信息  把 文件名 放在数组中
     $scope.getAllRecipeFile = function(){
-      // 读入目录下全部文件 。
-      var files = fs.readdirSync("./data/recipe");
+      
       var recipeFiles = [];
       // 筛选出 json 文件
-      files.forEach(function(fileName, index) {
+      $scope.files.forEach(function(fileName, index) {
         if( ".json" === path.extname(fileName) ){
           if( "allMedicine.json" === fileName ){
             console.log("Ignore " + fileName);
-          }else{
+          }
+          else if( "." === fileName.substring(0,1) ){
+            console.log( "Ignore: " + fileName );
+          }
+          else{
             recipeFiles.push(fileName);
           }
         }
@@ -98,6 +103,9 @@
 
     // 读所有处方文件， 取出内容，放入数组。
     $scope.go_detail = function(){
+      // 读入所有 处方文件名   把 文件名 放在数组中
+      $scope.allRecipeFiles = $scope.getAllRecipeFile();
+
       var files = $scope.allRecipeFiles;
       $scope.detail = [];
       $scope.allRecipe = [];
@@ -151,19 +159,19 @@
       $scope.Cash_sum = cash_pay.toFixed(2);
 
       // 计算所有药物销售金额的 总计
-      
       $scope.total = (parseFloat(vipcard_pay) + parseFloat(cash_pay)).toFixed(2);
 
     };
 
-    // 读入所有 处方文件名   把 文件名 放在数组中
-    $scope.allRecipeFiles = $scope.getAllRecipeFile();
+    // 读入目录下全部文件 。
+    $scope.files = fs.readdirSync("./data/recipe");
+    
   }
   
   
   debug_flag = 0;
 
-  var login_flag = prompt("请输入密码");
+  var login_flag = window.prompt("请输入密码");
   if( "frtabc" === login_flag ){
     console.log("密码正确");
   }else{
