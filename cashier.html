@@ -83,7 +83,8 @@
         支付方式： <input type="radio" name="pay_type" ng-model="data.pay_type"  value="vip_card"> 会员卡 
         <input type="radio" name="pay_type" ng-model="data.pay_type"  value="cash"> 现金 
         <br><br>
-        <input type="button" value=" 打印 & 结帐 "   ng-click="go_save()"   />
+        <input type="button" value=" 保存 "   ng-click="go_save()"   />
+        <input type="button" value=" 打印 "   ng-click="go_print()"   />
         <input type="button" value=" 撤销 & 清除 "   ng-click="go_clear()"   />
         </h3>
         
@@ -217,14 +218,21 @@
          console.log( "$scope.datas = ###" + aStr + "###" );
         // Write a file:
         fs.writeFileSync( "./data/recipe/" + strFileName + ".json", aStr);
-        window.print();
+        
       }
     };
+
+    $scope.go_print = function(){
+      window.print();
+      $scope.go_clear();
+    };
+
     
     $scope.go_clear = function(){
       $scope.data.recipe.items = [];
       $scope.data.suitprice = 0;
       $scope.data.sumprice = 0;
+      $scope.data.case_no = "";
     };
 
     $scope.go_set = function(med){
