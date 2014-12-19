@@ -70,7 +70,9 @@
         <br>
         <h2 style="line-height:200%;">
           单付价格：{{data.suitprice}}<br>
-          抓药数量(付数)：<input  type="text"  id="id_suitcount"   ng-model="data.suitcount"      style="width:75px"    required  ng-trim="true" />
+          抓药数量(付数)：<input  type="number" value="0" id="id_suitcount" onclick="go_selected(this)" 
+          ng-change="go_suitcountChange()" ng-model="data.suitcount"        required    ng-trim="true" 
+          style="width:75px" />
           <input type="button" value=" 计价 "   ng-click="go_calc()"   />
           
           </h2>
@@ -86,7 +88,7 @@
         <input type="radio" name="pay_type" ng-model="data.pay_type"  value="cash"> 现金 
         <br>
         收入金额： 
-        <input type="number" id="id_shouru"   ng-model="shouru" onclick="go_shouru()" style="width:80px" /><br>
+        <input type="number" id="id_shouru"   ng-model="shouru" onclick="go_selected(this)" style="width:80px" /><br>
         
         找零金额： {{ (shouru-data.sumprice).toFixed(1)}} </h2><br>
 
@@ -115,7 +117,7 @@
     $scope.data.recipe.items = [];
 
     $scope.data.suitprice = 0;
-    $scope.data.suitcount = "";
+    $scope.data.suitcount = 0;
     $scope.data.sumprice = 0;
     $scope.shouru = 0;
 
@@ -129,7 +131,7 @@
         obj.focus();
         return false;
       }
-      if( isblank($scope.fields.count) ){
+      else if( isblank($scope.fields.count) ){
         alert("请输入药品数量");
         obj = document.getElementById( 'id_1' );
         obj.focus();
@@ -167,6 +169,7 @@
 
     // 计算药价
     $scope.go_calc = function(){ 
+
       // 检查输入是否正确
       if( $scope.data.recipe.items.length === 0 ){
         alert("请首先录入药品");
@@ -174,20 +177,15 @@
         obj.focus();
         return false;
       }
-      if( isblank($scope.data.suitcount) ){
+      else if( isblank($scope.data.suitcount) ){
+        console.log("abc:"+$scope.data.suitcount);
         alert("请输入抓药数量");
         obj = document.getElementById( 'id_suitcount' );
         obj.focus();
         obj.select();
         return false;
       }
-      else if( $scope.data.suitcount <= 0 ){
-        alert("抓药数量应该大于0");
-        obj = document.getElementById( 'id_suitcount' );
-        obj.focus();
-        obj.select();
-        return false;
-      }
+      
 
       $scope.data.suitprice = 0;
       for( var i=0; i<$scope.data.recipe.items.length; i++){
@@ -231,13 +229,16 @@
          console.log( "$scope.datas = ###" + aStr + "###" );
         // Write a file:
         fs.writeFileSync( "./data/recipe/" + strFileName + ".json", aStr);
-        
+        return true;
       }
     };
 
     $scope.go_print = function(){
-      window.print();
-      $scope.go_clear();
+      if( $scope.go_save() ){
+        window.print();
+        $scope.go_clear();
+      }
+      
     };
 
     
@@ -275,6 +276,18 @@
         //$scope.zjm = "";
       }
       //console.log(temp_array);
+    };
+
+    $scope.go_suitcountChange = function(){
+      if( $scope.data.suitcount <= 0 ){
+          //console.log("def:"+$scope.data.suitcount);
+          alert("抓药数量应该大于0");
+          $scope.data.suitcount = 0;
+          obj = document.getElementById( 'id_suitcount' );
+          obj.focus();
+          obj.select();
+          return false;
+        }
     };
 
     $scope.condition_zjm = function(value){
@@ -335,9 +348,10 @@
     };
   }
 
-  var go_shouru = function( index ){
-    var obj = document.getElementById( 'id_shouru' );
-    obj.select();
+
+
+  var go_selected = function( tempobj ){
+    tempobj.select();
   };
   
   var obj = document.getElementById( 'id_0' );

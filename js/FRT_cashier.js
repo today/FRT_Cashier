@@ -18,7 +18,11 @@ function isblank(strA){
 			return false;
 		}
 	}else{
-		return true;
+    if( "number" === typeof(strA) ){
+      return false;
+    }else{
+      return true;
+    }
 	}
 }
 
