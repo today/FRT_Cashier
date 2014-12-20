@@ -5,6 +5,7 @@ var fs = require('fs');
 var path = require('path');
 var mysql = require('mysql');
 
+DEBUG_FLAG = 0;
 
 function isblank(strA){
 	if(strA){
@@ -149,7 +150,7 @@ document.onkeydown = function(event) {
           // loop to 0
           var obj2 = document.getElementById( 'id_0' );
           obj2.focus();
-          console.log(obj2.type );
+          //console.log(obj2.type );
           if(obj2.type === "text"){
           	obj2.select();
           } 
