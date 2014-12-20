@@ -22,8 +22,16 @@ GET:
       <input type="submit" value="  O K  ">
 
   </form>
+<hr>
+window.open: 
+<input type="button" value="  OPEN  "  onclick="go_open()">
 
 <script type="text/javascript">
+
+var go_open = function(){
+  window.open("print_recipe.html", "Print",
+                 "width=400,height=320,");
+};
 
 
 // 更简单直接的方法是，在地址栏输入   nw:version  
