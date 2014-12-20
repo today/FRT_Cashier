@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>福润堂 小票打印</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script type="text/javascript" src="lib/angular.js"></script>
+  <script type="text/javascript" src="js/FRT_cashier.js"></script>
+  <style type="text/css">
+    input.ng-invalid.ng-dirty, input.ng-invalid.ng-invalid {
+      background-color: yellow;
+    }
+  </style>
+  
+</head>
+<body ng-app="ngApp" ng-controller="Ctrl">
+  <h1 style="">福润堂</h1> 
+  <h3 style="line-height:200%;" >门诊号：{{data.case_no}} </h3>
+  
+  <h3>
+    <table border="1" width="250">
+      <tr><td></td><td>药名</td><td>用量</td></tr>  
+
+      <tr ng-repeat="obj in data.recipe.items">
+        <td>&nbsp; {{$index+1}} &nbsp; </td>
+        <td>{{obj.medicine_name}}</td>
+        <td>{{obj.count}}</td>
+      </tr>
+    </table></h3>
+
+    <br>
+    <h3 style="line-height:200%;" >
+      单付价格：{{data.suitprice}}  &nbsp;&nbsp;&nbsp;
+      付数：{{data.suitcount}}<br>
+      支付方式： {{data.pay_type}}<br>
+      总价：{{data.sumprice}}
+    </h3>
+     
+    
+  
+<script type="text/javascript">
+  var url_param = location.href.substring(location.href.indexOf("?")+1);
+  url_param = decodeURI(url_param);
+  var params = url_param.split(",");
+
+  var binglihao = params[0];
+  console.log(binglihao);
+
+  var ngApp = angular.module('ngApp', []);
+
+  function Ctrl($scope) {
+    
+    $scope.dummy = "will";
+    
+    $scope.data = {};
+    $scope.data.patient = {};
+    $scope.data.recipe = {};
+    $scope.data.recipe.items = [];
+
+    $scope.data.suitprice = 0;
+    $scope.data.suitcount = 0;
+    $scope.data.sumprice = 0;
+    $scope.shouru = 0;
+
+    
+
+    $scope.go_case_no = function(){
+      
+      var filename = "./data/recipe/" + $scope.case_no + ".json";
+      if( fs.existsSync( filename) ){
+        $scope.data = readFileToJson(filename);
+      }
+    };
+
+    $scope.case_no=binglihao;
+    //$scope.$apply();
+    $scope.go_case_no();
+  }
+
+  setTimeout(function(){
+                          window.print();  
+                       },1000);
+
+
+  
+
+  </script>
+</body>
+</html>
+
+
+
+
