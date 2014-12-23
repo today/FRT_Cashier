@@ -51,6 +51,7 @@
          
         </table>
         <br>
+        <div ng-hide="finished">
         助记码：<input  type="text"  id="id_0"   ng-model="zjm"  ng-change="go_zjm()"   style="width:35px" />
           
         药品名称：
@@ -58,7 +59,8 @@
 
           药品用量：<input  type="number"  id="id_1"   ng-model="fields.count"    style="width:35px"  ng-trim="true" />&nbsp;克&nbsp;
         <input type="button" id="id_2" value=" 保存 & 下一个 "   ng-click="save()"   />
-      </h3>
+       </div>
+       </h3>
        <table width="100%" border="" >
           <tr ng-repeat="medi in allMedicine| filter:condition_zjm | limitTo:5 ">
             <td>{{medi.short_name}}</td>
@@ -71,7 +73,7 @@
         <h2 style="line-height:200%;">
           单付价格：{{data.suitprice}}<br>
           抓药数量(付数)：<input  type="number" value="0" id="id_suitcount" onclick="go_selected(this)" 
-          ng-change="go_suitcountChange()" ng-model="data.suitcount"        required    ng-trim="true" 
+          ng-change="go_suitcountChange()" ng-model="data.suitcount"     ng-readonly="finished"   required 
           style="width:75px" />
           <input type="button" value=" 计价 "   ng-click="go_calc()"   />
           
@@ -85,10 +87,11 @@
         
         <br>
         支付方式： <input type="radio" name="pay_type" ng-model="data.pay_type"  value="vip_card"> 会员卡 
-        <input type="radio" name="pay_type" ng-model="data.pay_type"  value="cash"> 现金 
+        <input type="radio" name="pay_type" ng-model="data.pay_type"  value="cash" > 现金 
         <br>
         收入金额： 
-        <input type="number" id="id_shouru"   ng-model="shouru" onclick="go_selected(this)" style="width:80px" /><br>
+        <input type="number" id="id_shouru"   ng-model="shouru" ng-readonly="finished" 
+        onclick="go_selected(this)" style="width:80px" /><br>
         
         找零金额： {{ (shouru-data.sumprice).toFixed(1)}} </h2><br>
 
@@ -119,6 +122,7 @@
     $scope.data.suitprice = 0;
     $scope.data.suitcount = 0;
     $scope.data.sumprice = 0;
+    $scope.data.finished = false;
     $scope.shouru = 0;
 
     var tempObj = {"medicine_name":"药材","count":"1","unit":"克","price":"0.0","xiaoji":"0.0"};
@@ -234,13 +238,26 @@
     };
 
     $scope.go_print = function(){
-      if( $scope.go_save() ){
-        window.open("print_recipe.html?" + $scope.data.case_no, "Print",
-                 "width=300,height=600,location=no,directories=no,menubar=no,resizable=no,toolbar=no");
-        
-        $scope.go_clear();
+      if( $scope.fields.count <= 0 ){
+        alert("药品数量应该大于0");
+        obj = document.getElementById( 'id_1' );
+        obj.focus();
+        obj.select();
+        return false;
       }
-      
+
+      if( $scope.data.finished === false ){
+        $scope.data.finished = true;
+        if( $scope.go_save() ){
+          console.log("Save recipe successful.");
+        }else{
+          console.log("Error on Save recipe.");
+        }
+      }
+      window.open("print_recipe.html?" + $scope.data.case_no, "Print",
+                   "width=300,height=600,location=no,directories=no,menubar=no,resizable=no,toolbar=no");
+          
+      $scope.go_clear(); 
     };
 
     
@@ -263,6 +280,11 @@
       var filename = "./data/recipe/" + case_no + ".json";
       if( fs.existsSync( filename) ){
         $scope.data = readFileToJson(filename);
+        if( !$scope.data.finished ){
+          $scope.data.finished=false;
+        }
+        $scope.finished = $scope.data.finished;
+        
       }
     };
 
