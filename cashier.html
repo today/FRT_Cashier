@@ -217,6 +217,17 @@
 
     $scope.go_save = function(){
       
+      
+        var strFileName = $scope.data.case_no;
+        var aStr = JSON.stringify($scope.data);
+        console.log( "$scope.datas = ###" + aStr + "###" );
+        // Write a file:
+        fs.writeFileSync( "./data/recipe/" + strFileName + ".json", aStr);
+        return true;
+      
+    };
+
+    $scope.go_print = function(){
       if( isblank($scope.data.case_no) ){
         alert("请输入门诊号");
         obj = document.getElementById( 'id_case_no' );
@@ -227,18 +238,8 @@
         alert("请选择付款方式");
         
         return false;
-      }else{
-        var strFileName = $scope.data.case_no;
-        var aStr = JSON.stringify($scope.data);
-        //console.log( "$scope.datas = ###" + aStr + "###" );
-        // Write a file:
-        fs.writeFileSync( "./data/recipe/" + strFileName + ".json", aStr);
-        return true;
       }
-    };
-
-    $scope.go_print = function(){
-      if( $scope.data.suitcount <= 0 ){
+      else if( $scope.data.suitcount <= 0 ){
         alert("药品数量应该大于0");
         obj = document.getElementById( 'id_suitcount' );
         obj.focus();
@@ -252,6 +253,7 @@
           console.log("Save recipe successful.");
         }else{
           console.log("Error on Save recipe.");
+          return false;
         }
       }
       window.open("print_recipe.html?" + $scope.data.case_no, "Print",
@@ -267,6 +269,8 @@
       $scope.data.sumprice = 0;
       $scope.data.zjm = "";
       $scope.data.case_no = "";
+      $scope.data.finished = false;
+      $scope.shouru = 0;
     };
 
     $scope.go_set = function(med){
@@ -276,8 +280,7 @@
     };
 
     $scope.go_case_no = function(){
-      console.profile("abc");
-
+      
       var case_no = $scope.data.case_no;
       var filename = "./data/recipe/" + case_no + ".json";
       if( fs.existsSync( filename) ){
@@ -288,7 +291,6 @@
         $scope.finished = $scope.data.finished;
         //console.table($scope.data.recipe);
       }
-      console.profileEnd();
     };
 
 
