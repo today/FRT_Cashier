@@ -238,9 +238,9 @@
     };
 
     $scope.go_print = function(){
-      if( $scope.fields.count <= 0 ){
+      if( $scope.data.suitcount <= 0 ){
         alert("药品数量应该大于0");
-        obj = document.getElementById( 'id_1' );
+        obj = document.getElementById( 'id_suitcount' );
         obj.focus();
         obj.select();
         return false;
@@ -276,6 +276,8 @@
     };
 
     $scope.go_case_no = function(){
+      console.profile("abc");
+
       var case_no = $scope.data.case_no;
       var filename = "./data/recipe/" + case_no + ".json";
       if( fs.existsSync( filename) ){
@@ -284,8 +286,9 @@
           $scope.data.finished=false;
         }
         $scope.finished = $scope.data.finished;
-        
+        //console.table($scope.data.recipe);
       }
+      console.profileEnd();
     };
 
 
@@ -339,6 +342,7 @@
     $scope.allMedicine = $scope.getAllMedicine();
     //console.log(" len:" + $scope.allMedicine.length);
     //console.log($scope.allMedicine[0]);
+
 
     $scope.medicine_list = [];
     for( var i=0; i<$scope.allMedicine.length; i++ ){
