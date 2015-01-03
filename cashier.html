@@ -31,8 +31,28 @@
     年龄:     <input  type="number"     ng-model="newdata.case.age"     style="width:30px"    />
   </div>
 -->
-  <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case_no"  ng-blur="go_case_no()" style="width:100px"  required ng-trim="true" />
-  </h3>
+  <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case_no"  ng-blur="go_case_no()" style="width:100px"   readonly="true" />
+    <input type="button" ng-click="go_showBooking()"  value=" 选取 ">
+    </h3>
+    <table  border="1" ="" ng-hide="flag_hideBooking">
+      <tr>
+        <th style="width:55px;">预约编号</th>
+        <th style="width:120px;">门诊号</th>
+        <th style="width:65px;">病历号</th>
+        <th style="width:100px;">姓名</th>
+        <th style="width:5px;"></th>
+        
+      </tr>
+      <tr ng-repeat="obj in bookinglist.bookinglist | filter: filter_blank "  >
+        <td align="center"  >  {{obj.index}}</td>
+        <td>{{obj.case_no}}</td>
+        <td>{{obj.patient_no}}</td>
+        <td>{{obj.name}}</td>
+        <td><input type="button" ng-click="go_select( obj.case_no )" value=" 选择 ">  </td>
+        
+      </tr>
+    </table> 
+  
   <table border="0"><tr>   
     <td> 
       <h3 >   处方：    
@@ -103,11 +123,32 @@
     </td>
   </tr>
 </table>
+
+<div>
+  <table  style="" ng-hide="flag_hideBooking">
+      <tr>
+        <th style="width:55px;">预约编号</th>
+        <th style="width:120px;">门诊号</th>
+        <th style="width:65px;">病历号</th>
+        <th style="width:100px;">姓名</th>
+        <th style="width:5px;"></th>
+        
+      </tr>
+      <tr ng-repeat="obj in bookinglist.bookinglist | filter: filter_blank "  >
+        <td align="center"  >  {{obj.index}}</td>
+        <td>{{obj.case_no}}</td>
+        <td>{{obj.patient_no}}</td>
+        <td>{{obj.name}}</td>
+        <td><input type="button" ng-click="go_select( obj.case_no )" value=" 选择 ">  </td>
+        
+      </tr>
+    </table> 
+</div>
   
 <script type="text/javascript">
   var inputApp = angular.module('inputApp', []);
 
-  function Ctrl($scope) {
+  function Ctrl($scope, $http) {
     
 
     $scope.dummy = "will";
@@ -124,6 +165,9 @@
     $scope.data.sumprice = 0;
     $scope.data.finished = false;
     $scope.shouru = 0;
+
+    $scope.bookinglist = null;
+    $scope.flag_hideBooking = true;
 
     var tempObj = {"medicine_name":"药材","count":"1","unit":"克","price":"0.0","xiaoji":"0.0"};
 
@@ -332,6 +376,31 @@
       else{
         return false;
       }
+    };
+
+    // 显示预约表格
+    $scope.go_showBooking =function(){
+      
+      $http.get('http://localhost:8080/getBooking?filename=booking_2014-11-12.json')
+      .success(function(data) {
+        console.log(data);
+        $scope.bookinglist = data;
+        $scope.flag_hideBooking = false;
+      })
+      .error(function(data, status, headers, config) {
+        console.log(data);
+      });
+
+      
+    };
+
+    $scope.filter_blank = function(e){
+      return  !(e.patient_no === "0");
+    };
+
+    $scope.go_select = function ( case_no ){
+      $scope.data.case_no = case_no;
+      $scope.flag_hideBooking = true;
     };
 
     $scope.getAllMedicine = function(){
