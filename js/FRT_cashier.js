@@ -58,6 +58,10 @@ function makeBlankLine(aDate){
 	return obj;
 }
 
+function getBookingFilename( aDate ){
+  return 'booking_' + getYMD(aDate) + '.json' ;
+}
+
 // 把内容附加到文件中的 Json 数组中，作为最后一个成员。
 function appendToJsonFile( filename, aJsonObj ){
 	

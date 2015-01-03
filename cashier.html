@@ -41,7 +41,6 @@
         <th style="width:65px;">病历号</th>
         <th style="width:100px;">姓名</th>
         <th style="width:5px;"></th>
-        
       </tr>
       <tr ng-repeat="obj in bookinglist.bookinglist | filter: filter_blank "  >
         <td align="center"  >  {{obj.index}}</td>
@@ -50,6 +49,11 @@
         <td>{{obj.name}}</td>
         <td><input type="button" ng-click="go_select( obj.case_no )" value=" 选择 ">  </td>
         
+      </tr>
+      <tr>
+        <td colspan="5">
+          日期选择： <input type="date" name="i_date" ng-model="selected_date" ng-change="go_showBooking()"  />
+        </td>
       </tr>
     </table> 
   
@@ -124,27 +128,6 @@
   </tr>
 </table>
 
-<div>
-  <table  style="" ng-hide="flag_hideBooking">
-      <tr>
-        <th style="width:55px;">预约编号</th>
-        <th style="width:120px;">门诊号</th>
-        <th style="width:65px;">病历号</th>
-        <th style="width:100px;">姓名</th>
-        <th style="width:5px;"></th>
-        
-      </tr>
-      <tr ng-repeat="obj in bookinglist.bookinglist | filter: filter_blank "  >
-        <td align="center"  >  {{obj.index}}</td>
-        <td>{{obj.case_no}}</td>
-        <td>{{obj.patient_no}}</td>
-        <td>{{obj.name}}</td>
-        <td><input type="button" ng-click="go_select( obj.case_no )" value=" 选择 ">  </td>
-        
-      </tr>
-    </table> 
-</div>
-  
 <script type="text/javascript">
   var inputApp = angular.module('inputApp', []);
 
@@ -168,6 +151,7 @@
 
     $scope.bookinglist = null;
     $scope.flag_hideBooking = true;
+    $scope.selected_date = new Date();
 
     var tempObj = {"medicine_name":"药材","count":"1","unit":"克","price":"0.0","xiaoji":"0.0"};
 
@@ -380,8 +364,10 @@
 
     // 显示预约表格
     $scope.go_showBooking =function(){
+      var filename = getBookingFilename($scope.selected_date);
+      console.log(filename);
       
-      $http.get('http://localhost:8080/getBooking?filename=booking_2014-11-12.json')
+      $http.get('http://localhost:8080/getBooking?filename=' + filename)
       .success(function(data) {
         console.log(data);
         $scope.bookinglist = data;
