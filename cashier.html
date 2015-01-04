@@ -381,7 +381,7 @@
     };
 
     $scope.filter_blank = function(e){
-      return  !(e.patient_no === "0");
+      return  !(e.patient_no === "0" && e.name === "");
     };
 
     $scope.go_select = function ( case_no ){
