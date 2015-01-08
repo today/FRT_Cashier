@@ -31,7 +31,7 @@
     年龄:     <input  type="number"     ng-model="newdata.case.age"     style="width:30px"    />
   </div>
 -->
-  <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case_no"  ng-blur="go_case_no()" style="width:100px"   />
+  <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case.case_no"  ng-blur="go_case_no()" style="width:100px"   />
     <input type="button" ng-click="go_showBooking()"  value=" 选取 ">
     </h3>
     <table  border="1" ="" ng-hide="flag_hideBooking">
@@ -47,7 +47,7 @@
         <td>{{obj.case_no}}</td>
         <td>{{obj.patient_no}}</td>
         <td>{{obj.name}}</td>
-        <td><input type="button" ng-click="go_select( obj.case_no )" value=" 选择 ">  </td>
+        <td><input type="button" ng-click="go_select( obj )" value=" 选择 ">  </td>
         
       </tr>
       <tr>
@@ -246,17 +246,17 @@
     $scope.go_save = function(){
       
       
-        var strFileName = $scope.data.case_no;
+        var case_no = $scope.data.case.case_no;
         var aStr = JSON.stringify($scope.data);
         console.log( "$scope.datas = ###" + aStr + "###" );
         // Write a file:
-        fs.writeFileSync( "./data/recipe/" + strFileName + ".json", aStr);
+        fs.writeFileSync( "./data/recipe/c" + case_no + ".json", aStr);
         return true;
       
     };
 
     $scope.go_print = function(){
-      if( isblank($scope.data.case_no) ){
+      if( isblank($scope.data.case.case_no) ){
         alert("请输入门诊号");
         obj = document.getElementById( 'id_case_no' );
         obj.focus();
@@ -284,7 +284,7 @@
           return false;
         }
       }
-      window.open("print_recipe.html?" + $scope.data.case_no, "Print",
+      window.open("print_recipe.html?" + $scope.data.case.case_no, "Print",
                    "width=300,height=600,location=no,directories=no,menubar=no,resizable=no,toolbar=no");
           
       $scope.go_clear(); 
@@ -295,10 +295,12 @@
       $scope.data.recipe.items = [];
       $scope.data.suitprice = 0;
       $scope.data.sumprice = 0;
-      $scope.data.zjm = "";
+      
       $scope.data.case_no = "";
       $scope.data.finished = false;
       $scope.shouru = 0;
+
+      $scope.zjm = "";
     };
 
     $scope.go_set = function(med){
@@ -309,8 +311,8 @@
 
     $scope.go_case_no = function(){
       
-      var case_no = $scope.data.case_no;
-      var filename = "./data/recipe/" + case_no + ".json";
+      var case_no = $scope.data.case.case_no;
+      var filename = "./data/recipe/c" + case_no + ".json";
       if( fs.existsSync( filename) ){
         $scope.data = readFileToJson(filename);
         if( !$scope.data.finished ){
@@ -384,8 +386,20 @@
       return  !(e.patient_no === "0" && e.name === "");
     };
 
-    $scope.go_select = function ( case_no ){
-      $scope.data.case_no = case_no;
+    $scope.go_select = function ( obj ){
+      
+      $scope.data.case = {};
+      $scope.data.case.case_no = obj.case_no;
+      $scope.data.case.patient_no = obj.patient_no;
+      $scope.data.case.patient_name = obj.patient_name;
+      $scope.data.case.mobile = obj.mobile;
+      $scope.data.case.patient_comment = obj.patient_comment;
+      $scope.data.case.sex = obj.sex;
+      $scope.data.case.age = obj.age;
+      $scope.data.case.comment = obj.comment;
+      $scope.data.case.suitnum = obj.suitnum;
+
+
       $scope.flag_hideBooking = true;
     };
 
