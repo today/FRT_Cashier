@@ -279,7 +279,7 @@
         return false;
       }
 
-      //if( $scope.data.case.finished === false ){
+      if( $scope.data.case.finished === false ){
         $scope.data.case.finished = true;
         if( $scope.go_save() ){
           console.log("Save recipe successful.");
@@ -287,7 +287,7 @@
           console.log("Error on Save recipe.");
           return false;
         }
-      //}
+      }
       window.open("print_recipe.html?c" + $scope.data.case.case_no, "Print",
                    "width=300,height=600,location=no,directories=no,menubar=no,resizable=no,toolbar=no");
           
