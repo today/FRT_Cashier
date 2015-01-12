@@ -117,7 +117,7 @@
         <input type="number" id="id_shouru"   ng-model="data.case.shouru" ng-readonly="finished" 
         onclick="go_selected(this)" style="width:80px" /><br>
         
-        找零金额： {{ (data.case.shouru-data.case.sumprice).toFixed(1)}} </h2><br>
+        找零金额： {{ data.case.zhaoling = (data.case.shouru-data.case.sumprice).toFixed(1)}} </h2><br>
 
         
         <input type="button" value=" 打印 "   ng-click="go_print()"   />
@@ -148,6 +148,7 @@
     $scope.data.case.sumprice = 0;
     $scope.data.case.finished = false;
     $scope.data.case.shouru = 0;
+    $scope.data.case.zhaoling = 0;
     $scope.data.case.pay_type = "cash";
 
     $scope.bookinglist = null;
@@ -220,7 +221,8 @@
       }
       
 
-      $scope.data.case.suitprice = 0;
+      //$scope.data.case.suitprice = 0;
+      var temp_suitprice = 0;
       for( var i=0; i<$scope.data.case.recipe.length; i++){
         var item = $scope.data.case.recipe[i];
         var name = item.medicine_name;
@@ -228,12 +230,12 @@
         //console.log(tempObj);
         item.price = tempObj.price;
         item.xiaoji = (item.price * item.count).toFixed(2);  // 保留两位小数
-        $scope.data.case.suitprice = parseFloat($scope.data.case.suitprice) + parseFloat(item.xiaoji) ;
+        temp_suitprice = parseFloat(temp_suitprice) + parseFloat(item.xiaoji) ;
         console.log("calc " + item.xiaoji );
       }
-
-      $scope.data.case.suitprice = $scope.data.case.suitprice.toFixed(2);
+      $scope.data.case.suitprice = (Math.ceil(temp_suitprice*10)/10).toFixed(2);
       console.log("calc " + $scope.data.case.suitprice);
+      
       $scope.data.case.sumprice = ($scope.data.case.suitprice * $scope.data.case.suitcount).toFixed(2);
       console.log("calc finished" + $scope.data.case.sumprice);
     };
