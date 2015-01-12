@@ -15,17 +15,20 @@
       <td width="100">药名</td>
       <td width="50">用量</td></tr>  
 
-      <tr ng-repeat="obj in data.recipe.items">
+      <tr ng-repeat="obj in data.case.recipe">
         <td> {{$index+1}} &nbsp; </td>
         <td>{{obj.medicine_name}}</td>
         <td>{{obj.count}}</td>
       </tr>
     </table>
     <br>
-      单付价格：{{data.suitprice}}  <br>
-      付数：{{data.suitcount}}<br>
-      支付方式： {{data.pay_type}}<br>
-      总价：{{data.sumprice}}
+      单付价格：{{data.case.suitprice}}  <br>
+      付数：{{data.case.suitcount}}<br>
+      总价：{{data.case.sumprice}}<br>
+      支付方式： {{data.case.pay_type}}<br>
+      收入： {{data.case.shouru}}<br>
+      找零： {{data.case.zhaoling}}<br>
+      
     
      
     
