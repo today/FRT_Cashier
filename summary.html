@@ -48,11 +48,15 @@
     <table border="1" width="500">
       <tr>
         <td colspan="3"> 
-        序号：{{$index+1}}  &nbsp;&nbsp;姓名：   性别：   
-        门诊号：{{recipe.case_no}} 金额：{{recipe.sumprice}} 付款方式：{{recipe.pay_type}}
+        序号：{{$index+1}}  &nbsp;&nbsp;
+        姓名：  {{recipe.case.patient_name}} &nbsp;&nbsp;
+        性别：   {{recipe.case.sex}}<br>
+        门诊号：{{recipe.case.case_no}}  &nbsp;&nbsp;
+        金额：{{recipe.case.sumprice}} &nbsp;&nbsp;
+        付款方式：{{recipe.case.pay_type}}
         </td></tr> 
       <tr><td></td><td>药名</td><td>用量</td></tr>  
-      <tr ng-repeat="obj in recipe.recipe.items">
+      <tr ng-repeat="obj in recipe.case.recipe">
         <td>&nbsp; {{$index+1}} &nbsp; </td>
         <td>{{obj.medicine_name}}</td>
         <td>{{obj.count}}</td>   
@@ -117,8 +121,8 @@
         // 处方内容 放入数组中
         $scope.allRecipe.push(Recipe_json);
 
-        //console.log(Recipe_json.recipe.items);
-        items = Recipe_json.recipe.items;
+        console.log(Recipe_json.case.recipe);
+        items = Recipe_json.case.recipe;
         for( var j=0; j<items.length; j++ ){
           var temp_obj = {};
           temp_obj.medicine_name = items[j].medicine_name;
@@ -132,7 +136,8 @@
     };
 
     $scope.go_summary = function(){
-
+      // 计算前，清空保存结果的数组
+      $scope.summary = [];
       // 计算每种药物的用量和销售金额的 小计
       var temp_obj_count = _.groupBy($scope.detail, function(obj){ return obj.medicine_name; });
       var all_count = _.values(temp_obj_count);
@@ -151,9 +156,9 @@
       
 
       // 计算 VIP卡 和 现金 的总计
-      var paytype_group = _.groupBy($scope.allRecipe, function(obj){ return obj.pay_type; });
-      var vipcard_pay = _.reduce(paytype_group.vip_card, function(memo, num){ return memo + parseFloat(num.sumprice); }, 0);
-      var cash_pay = _.reduce(paytype_group.cash, function(memo, num){ return memo + parseFloat(num.sumprice); }, 0);
+      var paytype_group = _.groupBy($scope.allRecipe, function(obj){ return obj.case.pay_type; });
+      var vipcard_pay = _.reduce(paytype_group.vip_card, function(memo, num){ return memo + parseFloat(num.case.sumprice); }, 0);
+      var cash_pay = _.reduce(paytype_group.cash, function(memo, num){ return memo + parseFloat(num.case.sumprice); }, 0);
       console.log(paytype_group);
       $scope.VIPCard_sum = vipcard_pay.toFixed(2);
       $scope.Cash_sum = cash_pay.toFixed(2);
