@@ -296,13 +296,18 @@
 
     
     $scope.go_clear = function(){
+      $scope.data = {};
+      $scope.data.patient = {};
+      $scope.data.case = {};
+
       $scope.data.case.recipe = [];
       $scope.data.case.suitprice = 0;
+      $scope.data.case.suitcount = 0;
       $scope.data.case.sumprice = 0;
-      
-      $scope.data.case.case_no = "";
       $scope.data.case.finished = false;
       $scope.data.case.shouru = 0;
+      $scope.data.case.zhaoling = 0;
+      $scope.data.case.pay_type = "cash";
 
       $scope.zjm = "";
     };
@@ -316,19 +321,27 @@
     $scope.go_case_no = function(){
       
       var case_no = $scope.data.case.case_no;
+
       var filename = "./data/recipe/c" + case_no + ".json";
       console.log( filename );
       if( fs.existsSync( filename) ){
         $scope.data = readFileToJson(filename);
         //console.log($scope.data);
 
-        if( !$scope.data.case.finished ){
-          $scope.data.case.finished=false;
+        if( $scope.data.case ){
+          if( $scope.data.case.finished ){
+            $scope.finished = $scope.data.case.finished;
+          }else{     
+            $scope.data.case.finished=false;
+          }
         }
-        $scope.finished = $scope.data.case.finished;
+        
+        
       }
       else{
         console.log( filename + " not exists.");
+        $scope.go_clear(); 
+        $scope.data.case.case_no = case_no;
       }
     };
 
