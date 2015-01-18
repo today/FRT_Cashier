@@ -40,18 +40,20 @@
         <th style="width:120px;">门诊号</th>
         <th style="width:65px;">病历号</th>
         <th style="width:100px;">姓名</th>
-        <th style="width:5px;"></th>
+        <th style="width:100px;">备注</th>
+        <th style="width:50px;"></th>
       </tr>
       <tr ng-repeat="obj in bookinglist.bookinglist | filter: filter_blank "  >
         <td align="center"  >  {{obj.index}}</td>
         <td>{{obj.case_no}}</td>
         <td>{{obj.patient_no}}</td>
         <td>{{obj.name}}</td>
+        <td>{{obj.remark}}</td>
         <td><input type="button" ng-click="go_select( obj )" value=" 选择 ">  </td>
         
       </tr>
       <tr>
-        <td colspan="5">
+        <td colspan="6">
           日期选择： <input type="date" name="i_date" ng-model="selected_date" ng-change="go_showBooking()"  />
         </td>
       </tr>
@@ -391,7 +393,7 @@
       var filename = getBookingFilename($scope.selected_date);
       console.log(filename);
       
-      $http.get('http://localhost:8080/getBooking?filename=' + filename)
+      $http.get('http://192.168.1.2:8080/getBooking?filename=' + filename)
       .success(function(data) {
         //console.log(data);
         $scope.bookinglist = data;
