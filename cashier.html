@@ -31,8 +31,9 @@
     年龄:     <input  type="number"     ng-model="newdata.case.age"     style="width:30px"    />
   </div>
 -->
-  <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case.case_no"  ng-blur="go_case_no()" style="width:100px"   />
+  <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case.case_no"  ng-blur="go_case_no()" style="width:150px"   />
     <input type="button" ng-click="go_showBooking()"  value=" 选取 ">
+    <input type="button" ng-click="go_xiaofangzi()"  value=" 小方子 ">
     </h3>
     <table  border="1" ="" ng-hide="flag_hideBooking">
       <tr>
@@ -402,8 +403,27 @@
       .error(function(data, status, headers, config) {
         console.log(data);
       });
+    };
 
+    // 增加一个小方子
+    $scope.go_xiaofangzi =function(){
+      var d = new Date();
+      var temp_no = "xfz" + d.getFullYear() +"-"+ (d.getMonth() + 1 ) +"-"+  d.getDate() +"_"+ d.getHours() +"_"+ d.getMinutes() +"_"+ d.getSeconds();
+
+
+      $scope.data.case.case_no = temp_no;
+      $scope.go_case_no();
       
+      $scope.data.case.patient_no = "4";
+      $scope.data.case.patient_name = "小方子";
+      $scope.data.case.mobile = "10000000000";
+      $scope.data.case.patient_comment = "";
+      $scope.data.case.sex = "男";
+      $scope.data.case.age = "0";
+      $scope.data.case.comment = "";
+      $scope.data.case.suitnum = "1";
+
+      $scope.flag_hideBooking = true;
     };
 
     $scope.filter_blank = function(e){
