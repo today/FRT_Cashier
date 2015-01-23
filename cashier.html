@@ -31,7 +31,7 @@
     年龄:     <input  type="number"     ng-model="newdata.case.age"     style="width:30px"    />
   </div>
 -->
-  <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case.case_no"  ng-blur="go_case_no()" style="width:150px"   />
+  <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case.case_no"  ng-blur="go_case_no()" style="width:150px"  readonly />
     <input type="button" ng-click="go_showBooking()"  value=" 选取 ">
     <input type="button" ng-click="go_xiaofangzi()"  value=" 小方子 ">
     </h3>
@@ -439,7 +439,13 @@
       console.log(obj.name);
       $scope.data.case.patient_name = obj.name;
       $scope.data.case.mobile = obj.mobile;
-      $scope.data.case.patient_comment = obj.remark;
+      
+      if(obj.remark===null){
+        $scope.data.case.patient_comment = "";
+      }else{
+        $scope.data.case.patient_comment = obj.remark;  
+      }
+      
       $scope.data.case.sex = obj.sex;
       $scope.data.case.age = obj.age;
       $scope.data.case.comment = obj.comment;
