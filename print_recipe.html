@@ -10,14 +10,21 @@
 <body ng-app="ngApp" ng-controller="Ctrl" style="font-size:14px;">
   <center><h1>福润堂</h1> </center>
   门诊号：{{data.case_no}} 
-    <table border="0" width="180">
-      <tr><td width="30"></td>
-      <td width="100">药名</td>
-      <td width="50">用量</td></tr>  
-
+    <table border="0" width="150">
+      <tr>
+        <td width="30"></td>
+        <td width="80">药名</td>
+        <td width="40">用量</td>
+      </tr>  
       <tr ng-repeat="obj in data.case.recipe">
         <td> {{$index+1}} &nbsp; </td>
-        <td>{{obj.medicine_name}}</td>
+        <td>
+          {{obj.medicine_name.substring(0,3);}}
+
+          <br ng-if="obj.medicine_name.length > 3">{{obj.medicine_name.substring(3,6);}}
+          <br ng-if="obj.medicine_name.length > 6">{{obj.medicine_name.substring(6,9);}}
+          <br ng-if="obj.medicine_name.length > 9">{{obj.medicine_name.substring(9,12);}}
+        </td>
         <td>{{obj.count}}</td>
       </tr>
     </table>
@@ -28,10 +35,6 @@
       支付方式： {{data.case.pay_type}}<br>
       收入： {{data.case.shouru}}<br>
       找零： {{data.case.zhaoling}}<br>
-      
-    
-     
-    
   
 <script type="text/javascript">
   var url_param = location.href.substring(location.href.indexOf("?")+1);
@@ -57,8 +60,6 @@
     $scope.data.sumprice = 0;
     $scope.shouru = 0;
 
-    
-
     $scope.go_case_no = function(){
       
       var filename = "./data/recipe/" + $scope.case_no + ".json";
@@ -75,9 +76,6 @@
   setTimeout(function(){
                           window.print();  
                        },1000);
-
-
-  
 
   </script>
 </body>
