@@ -14,18 +14,18 @@
       <tr>
         <td width="30"></td>
         <td width="80">药名</td>
-        <td width="40">用量</td>
+        <td width="40" style="text-align:right;">用量</td>
       </tr>  
       <tr ng-repeat="obj in data.case.recipe">
-        <td> {{$index+1}} &nbsp; </td>
-        <td>
+        <td style="vertical-align:top;" > {{$index+1}} &nbsp; </td>
+        <td style="vertical-align:top;" >
           {{obj.medicine_name.substring(0,3);}}
 
           <br ng-if="obj.medicine_name.length > 3">{{obj.medicine_name.substring(3,6);}}
           <br ng-if="obj.medicine_name.length > 6">{{obj.medicine_name.substring(6,9);}}
           <br ng-if="obj.medicine_name.length > 9">{{obj.medicine_name.substring(9,12);}}
         </td>
-        <td>{{obj.count}}</td>
+        <td style="vertical-align:top;text-align:right;" >{{obj.count}}</td>
       </tr>
     </table>
     <br>
