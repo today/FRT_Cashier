@@ -33,14 +33,14 @@
     
     <br><br><br><br><br><br>
   </div>
-  <div class='msg' > <h2 id="msg_area">{{message}}</h2> </div>
+  <span  > <span ng-repeat="txt in message" class='msg'>{{txt}}<br></span> </span>
     
 <script type="text/javascript">
 
 var dbApp = angular.module('dbApp', []);
 
 function Ctrl($scope) {
-  $scope.message = "......";
+  $scope.message = ["......"];
   var run_msg = "";
   var run_flag = false;
 
@@ -121,8 +121,15 @@ function Ctrl($scope) {
             console.log('stdout: ' + stdout);
             
         });
+        $scope.message.push( fileName + "保存成功。" );
       }
     });
+    
+    $scope.message.push( "全部保存完成。5秒后自动刷新页面。");
+    setTimeout(function(){
+      location.reload(true);
+    },5000);
+    
   };
   
   $scope.show_img = function(filename) {
