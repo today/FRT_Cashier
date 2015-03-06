@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>福润堂</title>
+  
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script type="text/javascript" src="lib/angular.js"></script>
+  <script type="text/javascript" src="js/FRT_cashier.js"></script>
+</head>
+<body ng-app="dbApp" ng-controller="Ctrl">
+  <h1>福润堂 <a href="cashier.html" style="float:right">返回</a>
+     </h1> 
+  <h2>门诊处方系统—收银—添加处方图片</h2> 
+  <br/>
+      
+  <div style="float:left;width:70%;height=100%;">
+    <h3>病历文件列表： 
+    <span style="float:right;" ><button ng-click="save_img()"  > 保存添加的图片 </button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    </span>
+    <br/></h3>
+    <br>
+    <li ng-repeat="name in new_filenames " >
+        <span ng-click="show_img(name)"> {{name}} </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        {{img_array[name]}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="file" id="id_{{name}}" >
+        <br><img ng-src="new_photos/{{img_array[name]}}" style="width:20;height:30;">
+       <br><br>
+    </li>
+    <br><br>
+    
+    <br><br><br><br><br><br>
+  </div>
+    <div class='msg' > <h2 id="msg_area">{{message}}</h2> </div>
+    
+<script type="text/javascript">
+
+var dbApp = angular.module('dbApp', []);
+
+function Ctrl($scope) {
+  $scope.message = "......";
+  var run_msg = "";
+  var run_flag = false;
+
+  // 检查特定目录和文件是否存在
+  var evnPath = "./";
+  run_flag = true;
+  
+
+  $scope.img_array = [];//true;
+
+  if( run_flag ){
+    // 读入目录下全部 JSon 文件 。
+    var basePath = "";
+    var files = fs.readdirSync( evnPath + "data/recipe");
+    var jsonFiles = [];
+    // 筛选出 JSon 文件
+    files.forEach(function(fileName, index) {
+      if( ".json" === path.extname(fileName) && !(fileName.indexOf(".") === 0) ){
+        jsonFiles.push(fileName);
+        console.log( fileName );
+
+        // 从文件中取出img信息
+        var file_json = readFileToJson( "data/recipe/" + fileName );
+        console.log( file_json );
+
+        if( file_json.case.images ){
+          $scope.img_array[fileName] = file_json.case.images[0];
+        }else{
+          file_json.case.images = [];
+          file_json.case.images[0] = "";
+          $scope.img_array[fileName] = "";
+        }    
+      }
+      console.log( fileName );
+
+    });
+    $scope.new_filenames = jsonFiles;
+  }
+  
+
+  $scope.save_img = function() {
+    $scope.new_filenames.forEach(function(fileName, index) {
+      
+      // 修改json文件。
+      
+
+
+
+
+
+      // copy处方图片   2014-9-18_36_7699 王新荣.jpg
+      var file_input = document.getElementById( "id_"+ fileName );
+      var file_fullpath = file_input.value;
+      console.log(file_input.value);
+      
+      if(file_fullpath){
+        
+        var cmd_str = '';
+        if( "win32" === process.platform ){
+          cmd_str = 'copy ' + file_fullpath + ' ./new_photos/' + fileName + ".jpg";
+        }else{
+          cmd_str = 'cp ' + file_fullpath + ' ./new_photos/' + fileName + ".jpg";
+        }
+        
+        console.log(cmd_str);
+
+        child_process.exec(cmd_str ,
+          function (error, stdout, stderr) {
+            if (error !== null) {
+              console.log('exec error: ' + error);
+            }
+            console.log('stdout: ' + stdout);
+            
+        });
+      }
+
+    });
+    
+  };
+  
+
+  $scope.show_img = function(filename) {
+    console.log( "filename : " + filename );
+  };
+
+  $scope.testA = function() {
+    console.log( JSON.stringify($scope) );
+  };
+}
+
+</script>
+</body>
+</html>
+
+
+
+

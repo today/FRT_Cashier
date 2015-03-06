@@ -4,6 +4,7 @@ var _ = require('underscore');
 var fs = require('fs');
 var path = require('path');
 var mysql = require('mysql');
+var child_process = require('child_process');
 
 DEBUG_FLAG = 0;
 
