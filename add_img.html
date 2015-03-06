@@ -23,17 +23,17 @@
     <br/></h3>
     <br>
     <li ng-repeat="name in new_filenames " >
-        <span ng-click="show_img(name)"> {{name}} </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        {{img_array[name]}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span> {{name}} </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span ng-click="show_img(name)">{{img_array[name]}} </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <input type="file" id="id_{{name}}" >
-        <br><img ng-src="new_photos/{{img_array[name]}}" style="width:20;height:30;">
-       <br><br>
+        <img ng-src="new_photos/{{img_array[name]}}" ng-show="hide_flag_array[name]" style="width:400px;height:600px;"  class="to_top" >
+       <br>
     </li>
     <br><br>
     
     <br><br><br><br><br><br>
   </div>
-    <div class='msg' > <h2 id="msg_area">{{message}}</h2> </div>
+  <div class='msg' > <h2 id="msg_area">{{message}}</h2> </div>
     
 <script type="text/javascript">
 
@@ -49,7 +49,10 @@ function Ctrl($scope) {
   run_flag = true;
   
 
-  $scope.img_array = [];//true;
+  $scope.img_array = [];
+  $scope.json_array = [];
+  $scope.hide_flag_array = [];
+
 
   if( run_flag ){
     // 读入目录下全部 JSon 文件 。
@@ -60,21 +63,22 @@ function Ctrl($scope) {
     files.forEach(function(fileName, index) {
       if( ".json" === path.extname(fileName) && !(fileName.indexOf(".") === 0) ){
         jsonFiles.push(fileName);
-        console.log( fileName );
+        //console.log( fileName );
 
         // 从文件中取出img信息
         var file_json = readFileToJson( "data/recipe/" + fileName );
-        console.log( file_json );
-
+        $scope.json_array[fileName] = file_json; 
+        
         if( file_json.case.images ){
           $scope.img_array[fileName] = file_json.case.images[0];
         }else{
           file_json.case.images = [];
           file_json.case.images[0] = "";
           $scope.img_array[fileName] = "";
-        }    
+        }
+
       }
-      console.log( fileName );
+      //console.log( fileName );
 
     });
     $scope.new_filenames = jsonFiles;
@@ -85,24 +89,26 @@ function Ctrl($scope) {
     $scope.new_filenames.forEach(function(fileName, index) {
       
       // 修改json文件。
-      
+      var temp_recipe = $scope.json_array[fileName];
+      // 构造图片文件的文件名   2014-9-18_36_7699 王新荣.jpg
+      var img_filename = temp_recipe.case.case_no + "_" + temp_recipe.case.patient_no +
+                         " " + temp_recipe.case.patient_name + ".jpg";
+      //console.log(img_filename);
+      temp_recipe.case.images[0] = img_filename;
+      // 把修改过的内容写入文件
+      writeJsonToFile( "data/recipe/" + fileName, temp_recipe );
 
-
-
-
-
-      // copy处方图片   2014-9-18_36_7699 王新荣.jpg
+      // copy处方图片   
       var file_input = document.getElementById( "id_"+ fileName );
       var file_fullpath = file_input.value;
-      console.log(file_input.value);
       
       if(file_fullpath){
         
         var cmd_str = '';
         if( "win32" === process.platform ){
-          cmd_str = 'copy ' + file_fullpath + ' ./new_photos/' + fileName + ".jpg";
+          cmd_str = 'copy "' + file_fullpath + '" "./new_photos/' + img_filename + '"'; 
         }else{
-          cmd_str = 'cp ' + file_fullpath + ' ./new_photos/' + fileName + ".jpg";
+          cmd_str = 'cp "' + file_fullpath + '" "./new_photos/' + img_filename + '"'; 
         }
         
         console.log(cmd_str);
@@ -116,19 +122,18 @@ function Ctrl($scope) {
             
         });
       }
-
     });
-    
   };
   
-
   $scope.show_img = function(filename) {
     console.log( "filename : " + filename );
+    if( $scope.hide_flag_array[filename] ){
+      $scope.hide_flag_array[filename] = false;
+    }else{
+      $scope.hide_flag_array[filename] = true;
+    }
   };
-
-  $scope.testA = function() {
-    console.log( JSON.stringify($scope) );
-  };
+ 
 }
 
 </script>

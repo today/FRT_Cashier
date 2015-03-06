@@ -91,6 +91,12 @@ function readFileToJson( filename ){
 	return aJson;
 }
 
+/*  Json内容写入指定文件   */
+function writeJsonToFile( filename, aJson ){
+    var jsonStr = JSON.stringify(aJson);
+    fs.writeFileSync( filename, jsonStr);
+    //console.log(strFileContent.lenght + "xxx");
+}
 
 document.onkeydown = function(event) { 
     keynum = event.which;
