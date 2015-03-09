@@ -25,6 +25,10 @@
   <br>
   <input type="button" value=" 第一步：装入数据 "   ng-click="go_detail()"   />
   <input type="button" value=" 第二步：计算汇总 "   ng-click="go_summary()"   />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <input type="button" value=" 打印汇总 "   ng-click="go_print2()"   />
+
+  <div id="id_summary">
   <h2>Summary</h2>
   <h3>总价：{{total}}</h3>
   <h3>VIP卡支付：{{VIPCard_sum}}</h3>
@@ -40,7 +44,7 @@
       <td class='txt_right'>{{obj.price}}</td>
     </tr>
   </table>
-
+  </div>
   <br><br>
 
   <h2>Detail</h2>
@@ -170,6 +174,27 @@
 
     // 读入目录下全部文件 。
     $scope.files = fs.readdirSync("./data/recipe");
+
+    $scope.go_print2 = function(){
+        var obj = document.getElementById('id_summary');
+
+        //打开一个新窗口newWindow
+        var newWindow=window.open("打印窗口","w_print_summary");
+        //要打印的div的内容
+        var docStr = "<link rel='stylesheet' href='css/bootstrap.css'><link rel='stylesheet' href='css/app.css'>" + obj.innerHTML ;
+        //打印内容写入newWindow文档
+        newWindow.document.write(docStr);
+        //关闭文档
+        newWindow.document.close();
+        
+        setTimeout(function(){
+                          //调用打印机
+                          newWindow.print();
+                          //关闭newWindow页面
+                          newWindow.close();
+                        }, 1000);
+
+    };
     
   }
   
