@@ -58,6 +58,32 @@ input[disabled]
     overflow:visible;
 }
 
+.to_bottom {
+    float: right;/*在右*/             
+    margin: 5px 5px 5px 5px;
+    padding: 10px;
+    border: 1px solid silver;
+           
+    box-shadow: 0px 0px 5px #000;
+    -moz-box-shadow: 0px 0px 5px #000;
+    -webkit-box-shadow: 0px 0px 5px #000;
+
+    filter:alpha(Opacity=100);-moz-opacity:1;opacity: 1;
+
+    top:1;/*最上*/             
+    color: #3E3E3E;
+    background-color: #aaa;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    text-align: left;
+    width: 35%;
+    z-index: 10000;
+    _position:absolute; /* for IE6 */
+    _top: expression(documentElement.scrollBottom + documentElement.clientHeight-this.offsetHeight); /* for IE6 */
+    overflow:visible;
+}
+
 .txt_left {
     text-align: left;
 }

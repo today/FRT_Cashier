@@ -20,19 +20,22 @@
     <span style="float:right;" ><button ng-click="save_img()"  > 保存添加的图片 </button>
     &nbsp;&nbsp;&nbsp;&nbsp;
     </span>
-    <br/></h3>
-    <br>
-    <li ng-repeat="name in new_filenames " >
-        <span> {{name}} </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <span ng-click="show_img(name)">{{img_array[name]}} </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="file" id="id_{{name}}" >
-        <img ng-src="new_photos/{{img_array[name]}}" ng-show="hide_flag_array[name]" style="width:400px;height:600px;"  class="to_top" >
-       <br>
-    </li>
-    <br><br>
-    
-    <br><br><br><br><br><br>
+    </h3>
+    <table>
+      <tr ng-repeat="name in new_filenames " >
+          <td> {{name}} {{name_array[name]}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>     
+          <td ng-click="show_img(name)">{{img_array[name]}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+          <td>  <input type="file" id="id_{{name}}" >        </td>
+         <br>
+      </tr>
+    </table>
   </div>
+
+  <span ng-show="show_img_flag" style="width:400px;height:600px;"  class="to_bottom">
+    <button ng-click="go_hide_img()" > 隐藏图片</button>或者等待5秒自动隐藏。<br><br>
+    <img src="{{temp_img_path}}"  >
+  </span>
+
   <span  > <span ng-repeat="txt in message" class='msg'>{{txt}}<br></span> </span>
     
 <script type="text/javascript">
@@ -50,9 +53,11 @@ function Ctrl($scope) {
   
 
   $scope.img_array = [];
+  $scope.name_array = [];
   $scope.json_array = [];
-  $scope.hide_flag_array = [];
-
+  
+  $scope.temp_img_path = "new_photos/2015-1-30_1_07620 杨怡艳.jpg";
+  $scope.show_img_flag = false;
 
   if( run_flag ){
     // 读入目录下全部 JSon 文件 。
@@ -68,6 +73,7 @@ function Ctrl($scope) {
         // 从文件中取出img信息
         var file_json = readFileToJson( "data/recipe/" + fileName );
         $scope.json_array[fileName] = file_json; 
+        $scope.name_array[fileName] = file_json.case.patient_name; 
         
         if( file_json.case.images ){
           $scope.img_array[fileName] = file_json.case.images[0];
@@ -131,14 +137,25 @@ function Ctrl($scope) {
     },5000);
     
   };
+
+  
+
+  $scope.go_hide_img = function() {
+      $scope.show_img_flag = false;
+  };
   
   $scope.show_img = function(filename) {
     console.log( "filename : " + filename );
-    if( $scope.hide_flag_array[filename] ){
-      $scope.hide_flag_array[filename] = false;
-    }else{
-      $scope.hide_flag_array[filename] = true;
-    }
+
+    $scope.temp_img_path = "new_photos/" + $scope.img_array[filename];
+    console.log($scope.temp_img_path);
+    $scope.show_img_flag = true;
+
+    setTimeout(function(){
+      //alert();
+      $scope.show_img_flag = false;
+      $scope.$apply();
+    },5000);
   };
  
 }
