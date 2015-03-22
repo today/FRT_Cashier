@@ -89,7 +89,7 @@
        </div>
        </h3>
        <table width="100%" border="" >
-          <tr ng-repeat="medi in allMedicine| filter:condition_zjm | limitTo:5 ">
+          <tr ng-repeat="medi in allMedicine| filter:condition_zjm | limitTo:10 ">
             <td>{{medi.short_name}}</td>
             <td>{{medi.medicine_name}}</td>
             <td>{{medi.price}}</td>
@@ -381,7 +381,10 @@
       if(str_b === ""){
         return false;
       }
-      else if(str_a.indexOf(str_b)===0 ){
+      // else if(str_a.indexOf(str_b)===0 ){
+      //   return true;
+      // }
+      else if(str_a.indexOf(str_b)>=0 ){
         return true;
       }
       else{
