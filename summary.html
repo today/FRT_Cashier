@@ -34,14 +34,25 @@
   <h3>VIP卡支付：{{VIPCard_sum}}</h3>
   <h3>现金支付：{{Cash_sum}}</h3>
 
-
-  <table border="1" width="500">
+<table border="1" width="500">
     <tr class='txt_center'><td></td><td>药名</td><td>用量</td><td>小计</td></tr>  
     <tr ng-repeat="obj in summary">
       <td>&nbsp; {{$index+1}} &nbsp; </td>
       <td>{{obj.medicine_name}}</td>
       <td class='txt_right'>{{obj.count}}</td>   
       <td class='txt_right'>{{obj.price}}</td>
+    </tr>
+  </table>
+  </div>
+  <br><br>
+
+  <h2>By Doctor</h2>
+  <table border="1" width="500">
+    <tr class='txt_center'><td></td><td>医生姓名</td><td>合计</td></tr>  
+    <tr ng-repeat="obj in sum_by_doctor">
+      <td>&nbsp; {{$index+1}} &nbsp; </td>
+      <td>{{obj.doctor_name}}</td>  
+      <td class='txt_right'>{{obj.sum}}</td>
     </tr>
   </table>
   </div>
@@ -84,6 +95,7 @@
     $scope.total = 0;
     $scope.VIPCard_sum = 0;
     $scope.Cash_sum = 0;
+    $scope.sum_by_doctor = [];
     
 
     // 读入所有 处方 信息  把 文件名 放在数组中
@@ -125,7 +137,7 @@
         // 处方内容 放入数组中
         $scope.allRecipe.push(Recipe_json);
 
-        console.log(Recipe_json.case.recipe);
+        //console.log(Recipe_json.case.recipe);
         items = Recipe_json.case.recipe;
         for( var j=0; j<items.length; j++ ){
           var temp_obj = {};
@@ -157,8 +169,6 @@
         $scope.summary.push(obj3);
       }
       
-      
-
       // 计算 VIP卡 和 现金 的总计
       var paytype_group = _.groupBy($scope.allRecipe, function(obj){ return obj.case.pay_type; });
       var vipcard_pay = _.reduce(paytype_group.vip_card, function(memo, num){ return memo + parseFloat(num.case.sumprice); }, 0);
@@ -167,9 +177,30 @@
       $scope.VIPCard_sum = vipcard_pay.toFixed(2);
       $scope.Cash_sum = cash_pay.toFixed(2);
 
+      //  计算每个医生的总计
+      var doctor_group = _.groupBy($scope.allRecipe, function(obj){ return obj.case.doctor_name; });
+      var all_doctor_names = _.keys(doctor_group);
+
+      for( var i=0; i< all_doctor_names.length; i++){
+        var temp_name = all_doctor_names[i];
+        var temp_sum = 0;
+        var doctor_sum = {};
+        for( var j=0; j< $scope.allRecipe.length; j++){
+          var temp_recipe = $scope.allRecipe[j];
+          if( temp_name === temp_recipe.case.doctor_name ){
+            console.log(temp_recipe.case.sumprice);
+            temp_sum = temp_sum + parseFloat(temp_recipe.case.sumprice);
+          }
+          
+          doctor_sum.doctor_name = temp_name;
+          doctor_sum.sum = temp_sum.toFixed(2);
+          
+        }
+        $scope.sum_by_doctor.push(doctor_sum);
+      }
+
       // 计算所有药物销售金额的 总计
       $scope.total = (parseFloat(vipcard_pay) + parseFloat(cash_pay)).toFixed(2);
-
     };
 
     // 读入目录下全部文件 。
