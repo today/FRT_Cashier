@@ -42,9 +42,10 @@
       </div>
 <div class='to_top' style="width:40%;" ng-show="edit_area" >
     <h3 style="">编辑药品信息</h3>
-    助 记 码 :   <input  type="text" id="id_2"  ng-model="fields.short_name"  required /> <br/>
-    名 称 :      <input  type="text" id="id_1"  ng-model="fields.medicine_name"  required /> <br/>
-    单价:(元/克) <input  type="number" id="id_3"  ng-model="fields.price" required/> <br/>
+    助 记 码 :   <input  type="text" id="id_1"  ng-model="fields.short_name"  required /> <br/>
+    名 称 :      <input  type="text" id="id_2"  ng-model="fields.medicine_name"  required /> <br/>
+    单 位 :      <input  type="text" id="id_3"  ng-model="fields.unit"  required /> <br/>
+    单价:(元/克) <input  type="number" id="id_4"  ng-model="fields.price" required/> <br/>
     
     <input type="button" value=" 保 存 "  ng-click="save_medicine()"  /> 
     <input type="button" value=" 取 消 "  ng-click="hideEdit()" style="float:right;" />
@@ -68,6 +69,7 @@
     $scope.fields.id = "";
     $scope.fields.medicine_name = "";
     $scope.fields.short_name = "";
+    $scope.fields.unit = "g";
     $scope.fields.price = "";
     
     var tempObj = {"medicine_name":"","short_name":"1","price":"0.0"};
@@ -99,8 +101,8 @@
       $scope.data_darty = true;
       // 开始操作数据库
 
-      var insertSQL = 'insert into t_medicine(medicine_name, short_name, price ) values(?,?,?)';
-      var updateSQL = 'update t_medicine set medicine_name=?, short_name=?, price=? where id=?';
+      var insertSQL = 'insert into t_medicine(medicine_name, short_name, unit, price ) values(?,?,?,?)';
+      var updateSQL = 'update t_medicine set medicine_name=?, short_name=?, unit=?, price=? where id=?';
 
       var mysql = require('mysql');
       var conn = getConn();
@@ -110,6 +112,7 @@
           var param1 = [];
           param1.push($scope.fields.medicine_name);
           param1.push($scope.fields.short_name);
+          param1.push($scope.fields.unit);
           param1.push($scope.fields.price);
 
           conn.query(insertSQL,param1, function (err1, res1) {
@@ -121,6 +124,7 @@
           var param2 = [];
           param2.push($scope.fields.medicine_name);
           param2.push($scope.fields.short_name);
+          param2.push($scope.fields.unit);
           param2.push($scope.fields.price);
           param2.push($scope.fields.id);
 
@@ -147,6 +151,8 @@
           $scope.data_darty = false;
           $scope.data_reload = true;
           $scope.start_export = false;
+
+
           $scope.$apply();
           //console.log(Medicine_json);
       });
@@ -158,7 +164,10 @@
       $scope.fields.id = med.id;
       $scope.fields.medicine_name = med.medicine_name;
       $scope.fields.short_name = med.short_name;
-      $scope.fields.price = med.price;
+      $scope.fields.unit = med.unit;
+
+      $scope.fields.price = getNumber(med.price);
+      
       $scope.edit_area = true;
     };
 
@@ -167,6 +176,7 @@
       $scope.fields.medicine_name = "";
       $scope.fields.short_name = "";
       $scope.fields.price = "";
+      $scope.fields.unit = "g";
       $scope.edit_area = true;
     };
 
@@ -194,6 +204,18 @@
       
       $scope.data.suitcount = 3;
     };
+  }
+
+  var getNumber = function(aNum) {
+    var bNum = Number(aNum);
+    
+    if( isNaN(bNum) ){
+      
+      return 0;
+    }
+    else{
+      return bNum;
+    }
   }
 
   debug_flag = 0;
