@@ -20,7 +20,7 @@
     <input type="button" id="id_fill" value=" 测试: 填充数据 " ng-click="test_fill()"  />
   </span>
 
-  <h1 style="">福润堂</h1> 
+  <h1 style="">福润堂</h1> <div class="msg">{{msg}}</div>
   <h2>收银   <a href="add_img.html"  style="float:right;">添加图片</a></h2>
   <br>
   <!--
@@ -132,6 +132,7 @@
 </table>
 
 <script type="text/javascript">
+  var serverUrl = "http://192.168.1.2:8080";
   var inputApp = angular.module('inputApp', []);
 
   function Ctrl($scope, $http) {
@@ -396,8 +397,8 @@
     $scope.go_showBooking =function(){
       var filename = getBookingFilename($scope.selected_date);
       console.log(filename);
-      
-      $http.get('http://192.168.1.2:8080/getBooking?filename=' + filename)
+      serverUrl + '/getBooking?filename='
+      $http.get(serverUrl + '/getBooking?filename=' + filename)
       .success(function(data) {
         //console.log(data);
         $scope.bookinglist = data;
@@ -466,26 +467,43 @@
     };
 
     $scope.getAllMedicine = function(){
-      var  Medicine_json = readFileToJson("./data/allMedicine.json");
-      //console.log(Medicine_json);
-      return Medicine_json;
+        $http.get( serverUrl + '/getAllMedicine')
+            .success(function(data) {
+              if( data.flag ){
+                if(data.flag==='error'){
+                  $scope.msg = "Back end Error. " + data.msg;
+                }else{
+                  $scope.msg = "Undefine Error.";
+                }
+              }else{
+                  $scope.allMedicine = data;
+
+                  $scope.medicine_list = [];
+                  for( var i=0; i<$scope.allMedicine.length; i++ ){
+                    var obj = $scope.allMedicine[i];
+                    medic = {};
+                    medic.key = obj.medicine_name;
+                    medic.value = obj.short_name + "-" + obj.medicine_name;
+                    //console.log(typeof(medic));
+                    $scope.medicine_list.push(medic);
+                  }
+                }
+
+              
+            })
+            .error(function(data, status, headers, config) {
+              console.log(data);
+              $scope.msg = "Front end Error.";
+            });
     };
 
     // 读入所有 药物 信息
-    $scope.allMedicine = $scope.getAllMedicine();
+    $scope.getAllMedicine();
     //console.log(" len:" + $scope.allMedicine.length);
     //console.log($scope.allMedicine[0]);
 
 
-    $scope.medicine_list = [];
-    for( var i=0; i<$scope.allMedicine.length; i++ ){
-      var obj = $scope.allMedicine[i];
-      medic = {};
-      medic.key = obj.medicine_name;
-      medic.value = obj.short_name + "-" + obj.medicine_name;
-      //console.log(typeof(medic));
-      $scope.medicine_list.push(medic);
-    }
+    
     //console.log($scope.medicine_list);
 
     $scope.test_fill = function(){
