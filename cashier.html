@@ -252,16 +252,26 @@
     
 
     $scope.go_save = function(){
-      
-      
         var case_no = $scope.data.case.case_no;
         var aStr = JSON.stringify($scope.data);
         console.log( "$scope.datas = ###" + aStr + "###" );
         // Write a file:
-        fs.writeFileSync( "./data/recipe/c" + case_no + ".json", aStr);
-        return true;
-      
-    };
+        //fs.writeFileSync( "./data/recipe/c" + case_no + ".json", aStr);
+        
+        $http.post( serverUrl + '/saveRecipe',  aStr)
+            .success(function(data, status, headers, config) {
+              //console.log(data);  
+              console.log("Case save successful. " + data);
+              return true;
+            })
+            .error(function(data, status, headers, config) { 
+              console.log(data);
+              console.log(status);
+              console.log(headers);
+              console.log(config);
+              console.log("upload error.");  
+            });    
+        };
 
     $scope.go_print = function(){
       if( isblank($scope.data.case.case_no) ){
@@ -326,27 +336,55 @@
       
       var case_no = $scope.data.case.case_no;
 
-      var filename = "./data/recipe/c" + case_no + ".json";
+      var filename = "c" + case_no + ".json";
       console.log( filename );
-      if( fs.existsSync( filename) ){
-        $scope.data = readFileToJson(filename);
-        //console.log($scope.data);
 
-        if( $scope.data.case ){
-          if( $scope.data.case.finished ){
-            $scope.finished = $scope.data.case.finished;
-          }else{     
-            $scope.data.case.finished=false;
-          }
-        }
-        
-        
-      }
-      else{
-        console.log( filename + " not exists.");
-        $scope.go_clear(); 
-        $scope.data.case.case_no = case_no;
-      }
+      $http.get( serverUrl + '/getRecipe?filename=' + filename)
+          .success(function(data) {
+            if( data.flag ){
+              if(data.flag==='error'){
+                //$scope.msg = "Back end Error. " + data.msg;
+                $scope.go_clear();
+                $scope.data.case.case_no = case_no;
+                $scope.finished = $scope.data.case.finished;
+
+              }else{
+                $scope.msg = "Undefine Error.";
+              }
+            }else{
+              $scope.data = data;
+              if( $scope.data.case ){
+                if( $scope.data.case.finished ){
+                  $scope.finished = $scope.data.case.finished;
+                }else{     
+                  $scope.data.case.finished=false;
+                }
+              }             
+            }
+          })
+          .error(function(data, status, headers, config) {
+            console.log(data);
+            $scope.msg = "Front end Error.";
+          });
+
+
+      // if( fs.existsSync( filename) ){
+      //   $scope.data = readFileToJson(filename);
+      //   //console.log($scope.data);
+
+      //   if( $scope.data.case ){
+      //     if( $scope.data.case.finished ){
+      //       $scope.finished = $scope.data.case.finished;
+      //     }else{     
+      //       $scope.data.case.finished=false;
+      //     }
+      //   }
+      // }
+      // else{
+      //   console.log( filename + " not exists.");
+      //   $scope.go_clear(); 
+      //   $scope.data.case.case_no = case_no;
+      // }
     };
 
 
@@ -436,6 +474,7 @@
 
     $scope.go_select = function ( obj ){
       // 要先执行load 数据的函数，否则将无法更新数据
+      $scope.data.case = {};
       $scope.data.case.case_no = obj.case_no;
       $scope.go_case_no();
       
@@ -461,9 +500,7 @@
         $scope.data.case.doctor_name = obj.doctor_name;  
       }
 
-      $scope.flag_hideBooking = true;
-
-            
+      $scope.flag_hideBooking = true;    
     };
 
     $scope.getAllMedicine = function(){

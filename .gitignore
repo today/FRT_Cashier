@@ -31,3 +31,5 @@ node_modules
 .lock-wscript
 
 *.jpg
+
+data_old/
