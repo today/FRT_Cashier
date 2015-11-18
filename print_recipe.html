@@ -37,6 +37,8 @@
       找零： {{data.case.zhaoling}}<br>
   
 <script type="text/javascript">
+  var serverUrl = "http://192.168.1.2:8080";
+
   var url_param = location.href.substring(location.href.indexOf("?")+1);
   url_param = decodeURI(url_param);
   var params = url_param.split(",");
@@ -46,7 +48,7 @@
 
   var ngApp = angular.module('ngApp', []);
 
-  function Ctrl($scope) {
+  function Ctrl($scope, $http) {
     
     $scope.dummy = "will";
     
@@ -62,10 +64,41 @@
 
     $scope.go_case_no = function(){
       
-      var filename = "./data/recipe/" + $scope.case_no + ".json";
-      if( fs.existsSync( filename) ){
-        $scope.data = readFileToJson(filename);
-      }
+      // var filename = "./data/recipe/" + ;
+      // if( fs.existsSync( filename) ){
+      //   $scope.data = readFileToJson(filename);
+      // }
+
+      $http.get( serverUrl + '/getRecipe?filename=' + $scope.case_no + ".json")
+          .success(function(data) {
+            if( data.flag ){
+              if(data.flag==='error'){
+                //$scope.msg = "Back end Error. " + data.msg;
+                $scope.go_clear();
+                $scope.data.case.case_no = case_no;
+                $scope.finished = $scope.data.case.finished;
+
+              }else{
+                $scope.msg = "Undefine Error.";
+              }
+            }else{
+              $scope.data = data;
+              if( $scope.data.case ){
+                if( $scope.data.case.finished ){
+                  $scope.finished = $scope.data.case.finished;
+                }else{     
+                  $scope.data.case.finished=false;
+                }
+              }             
+            }
+          })
+          .error(function(data, status, headers, config) {
+            console.log(data);
+            $scope.msg = "Front end Error.";
+          });
+
+
+
     };
 
     $scope.case_no=binglihao;
