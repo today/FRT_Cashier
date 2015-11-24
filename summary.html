@@ -15,11 +15,7 @@
   
 </head>
 <body ng-app="inputApp" ng-controller="Ctrl">
-  <span id='debug_area' style='display:none;'> 开发人员专用区域，按  `  键(ESC键下面那个键)，就可隐藏。  
-    
-    <input type="button" id="id_fill" value=" 测试: 填充数据 " ng-click="test_fill()"  />
-  </span>
-
+  
   <h1 style="">福润堂</h1> 
   <h2>日结</h2>
   <br>
@@ -82,9 +78,10 @@
 
 
 <script type="text/javascript">
+  var serverUrl = "http://192.168.1.2:8080";
   var inputApp = angular.module('inputApp', []);
 
-  function Ctrl($scope) {
+  function Ctrl($scope, $http) {
 
     $scope.dummy = "will";
 
@@ -97,58 +94,45 @@
     $scope.Cash_sum = 0;
     $scope.sum_by_doctor = [];
     
-
-    // 读入所有 处方 信息  把 文件名 放在数组中
-    $scope.getAllRecipeFile = function(){
-      
-      var recipeFiles = [];
-      // 筛选出 json 文件
-      $scope.files.forEach(function(fileName, index) {
-        if( ".json" === path.extname(fileName) ){
-          if( "allMedicine.json" === fileName ){
-            console.log("Ignore " + fileName);
-          }
-          else if( "." === fileName.substring(0,1) ){
-            console.log( "Ignore: " + fileName );
-          }
-          else{
-            recipeFiles.push(fileName);
-          }
-        }
-        //console.log( recipeFiles );
-      });
-
-      return recipeFiles;
-    };
-
     // 读所有处方文件， 取出内容，放入数组。
     $scope.go_detail = function(){
       // 读入所有 处方文件名   把 文件名 放在数组中
-      $scope.allRecipeFiles = $scope.getAllRecipeFile();
+      
 
-      var files = $scope.allRecipeFiles;
-      $scope.detail = [];
-      $scope.allRecipe = [];
+      $http.get( serverUrl + '/getAllRecipe' )
+          .success(function(data) {
+            if( data.flag ){
+                if(data.flag==='error'){
+                  $scope.msg = data.msg;
+                }else{
+                  $scope.msg = "Undefine Error.";
+                }
+            }else{
+                console.log(data);
+                $scope.allRecipe = data;
+                $scope.detail = [];
+                console.log(data);
+                // 读入所有 处方 文件内容。
+                for(var i=0; i<$scope.allRecipe.length; i++ ){
+                    var  Recipe_json = $scope.allRecipe[i];
+                    console.log(Recipe_json.case.recipe);
+                    items = Recipe_json.case.recipe;
+                    for( var j=0; j<items.length; j++ ){
+                        var temp_obj = {};
+                        temp_obj.medicine_name = items[j].medicine_name;
+                        temp_obj.count = items[j].count;
+                        temp_obj.price = items[j].price;
+                        // 药品内容 放入数组中
+                        $scope.detail.push(temp_obj);
+                    }
+                }
+            }
+          })
+          .error(function(data, status, headers, config) {
+            console.log(data);
+            $scope.msg = "Front end Error.";
+          });
 
-      // 读入所有 处方 文件内容。
-      for(var i=0; i<files.length; i++ ){
-        //console.log(files[i]);
-        var  Recipe_json = readFileToJson("./data/recipe/" + files[i]);
-        // 处方内容 放入数组中
-        $scope.allRecipe.push(Recipe_json);
-
-        //console.log(Recipe_json.case.recipe);
-        items = Recipe_json.case.recipe;
-        for( var j=0; j<items.length; j++ ){
-          var temp_obj = {};
-          temp_obj.medicine_name = items[j].medicine_name;
-          temp_obj.count = items[j].count;
-          temp_obj.price = items[j].price;
-          
-          // 药品内容 放入数组中
-          $scope.detail.push(temp_obj);
-        }
-      }
     };
 
     $scope.go_summary = function(){
@@ -203,8 +187,7 @@
       $scope.total = (parseFloat(vipcard_pay) + parseFloat(cash_pay)).toFixed(2);
     };
 
-    // 读入目录下全部文件 。
-    $scope.files = fs.readdirSync("./data/recipe");
+    
 
     $scope.go_print2 = function(){
         var obj = document.getElementById('id_summary');
