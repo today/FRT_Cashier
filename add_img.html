@@ -9,7 +9,7 @@
   <script type="text/javascript" src="lib/angular.js"></script>
   <script type="text/javascript" src="js/FRT_cashier.js"></script>
 </head>
-<body ng-app="dbApp" ng-controller="Ctrl">
+<body ng-app="angularApp" ng-controller="Ctrl">
   <h1>福润堂 <a href="cashier.html" style="float:right">返回</a>
      </h1> 
   <h2>门诊处方系统—收银—添加处方图片</h2> 
@@ -24,9 +24,9 @@
     <table>
       <tr ng-repeat="name in new_filenames " >
           <td> {{name}} {{name_array[name]}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>     
-          <td ng-click="show_img(name)">{{img_array[name]}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+          <td ng-click="show_img(name)"> {{img_array[name]}}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
           <td>  <input type="file" id="id_{{name}}" >        </td>
-         <br>
+         
       </tr>
     </table>
   </div>
@@ -40,9 +40,10 @@
     
 <script type="text/javascript">
 
-var dbApp = angular.module('dbApp', []);
+var angularApp = angular.module('angularApp', []);
+var serverUrl = "http://192.168.1.2:8080";
 
-function Ctrl($scope) {
+function Ctrl($scope, $http) {
   $scope.message = ["......"];
   var run_msg = "";
   var run_flag = false;
@@ -55,39 +56,46 @@ function Ctrl($scope) {
   $scope.img_array = [];
   $scope.name_array = [];
   $scope.json_array = [];
+  $scope.new_filenames = [];
   
-  $scope.temp_img_path = "new_photos/2015-1-30_1_07620 杨怡艳.jpg";
+  $scope.temp_img_path = "";
   $scope.show_img_flag = false;
 
+  // 初始化界面，获取所有处方信息。
   if( run_flag ){
-    // 读入目录下全部 JSon 文件 。
-    var basePath = "";
-    var files = fs.readdirSync( evnPath + "data/recipe");
-    var jsonFiles = [];
-    // 筛选出 JSon 文件
-    files.forEach(function(fileName, index) {
-      if( ".json" === path.extname(fileName) && !(fileName.indexOf(".") === 0) ){
-        jsonFiles.push(fileName);
-        //console.log( fileName );
+    $http.get( serverUrl + '/getAllRecipe' )
+          .success(function(data) {
+            if( data.flag ){
+                if(data.flag==='error'){
+                  $scope.msg = data.msg;
+                }else{
+                  $scope.msg = "Undefine Error.";
+                }
+            }else{
+                console.log(data);
+                var allRecipe = data;
+                for( i=0;i<allRecipe.length; i++ ){
+                    aRecipe = allRecipe[i];
+                    fileName = "c" + aRecipe.case.case_no;
+                    $scope.new_filenames.push(fileName);
+                    $scope.json_array[fileName] = aRecipe; 
+                    $scope.name_array[fileName] = aRecipe.case.patient_name; 
+                    
+                    if( aRecipe.case.images ){
+                      $scope.img_array[fileName] = aRecipe.case.images[0];
+                    }else{
+                      aRecipe.case.images = [];
+                      aRecipe.case.images[0] = "";
+                      $scope.img_array[fileName] = "";
+                    }
+                }
+            }
+          })
+          .error(function(data, status, headers, config) {
+            console.log(data);
+            $scope.msg = "Front end Error.";
+          });
 
-        // 从文件中取出img信息
-        var file_json = readFileToJson( "data/recipe/" + fileName );
-        $scope.json_array[fileName] = file_json; 
-        $scope.name_array[fileName] = file_json.case.patient_name; 
-        
-        if( file_json.case.images ){
-          $scope.img_array[fileName] = file_json.case.images[0];
-        }else{
-          file_json.case.images = [];
-          file_json.case.images[0] = "";
-          $scope.img_array[fileName] = "";
-        }
-
-      }
-      //console.log( fileName );
-
-    });
-    $scope.new_filenames = jsonFiles;
   }
   
 
@@ -101,8 +109,24 @@ function Ctrl($scope) {
                          " " + temp_recipe.case.patient_name + ".jpg";
       //console.log(img_filename);
       temp_recipe.case.images[0] = img_filename;
-      // 把修改过的内容写入文件
-      writeJsonToFile( "data/recipe/" + fileName, temp_recipe );
+      // 把修改过的内容发送到数据库保存
+      // writeJsonToFile( "data/recipe/" + fileName, temp_recipe );
+      $http.post( serverUrl + '/saveRecipe',  temp_recipe)
+          .success(function(data, status, headers, config) {
+            //console.log(data);  
+            console.log("Case save successful. " + data);
+            
+          })
+          .error(function(data, status, headers, config) { 
+            console.log(data);
+            console.log(status);
+            console.log(headers);
+            console.log(config);
+            console.log("upload error.");  
+      });    
+      
+
+
 
       // copy处方图片   
       var file_input = document.getElementById( "id_"+ fileName );
