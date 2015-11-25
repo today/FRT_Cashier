@@ -8,26 +8,9 @@
    
 </head>
 <body ng-app="ngApp" ng-controller="Ctrl" style="font-size:14px;">
-  <center><h1>福润堂</h1> </center>
-  门诊号：{{data.case_no}} 
-    <table border="0" width="150">
-      <tr>
-        <td width="30"></td>
-        <td width="80">药名</td>
-        <td width="40" style="text-align:right;">用量</td>
-      </tr>  
-      <tr ng-repeat="obj in data.case.recipe">
-        <td style="vertical-align:top;" > {{$index+1}} &nbsp; </td>
-        <td style="vertical-align:top;" >
-          {{obj.medicine_name.substring(0,3);}}
-
-          <br ng-if="obj.medicine_name.length > 3">{{obj.medicine_name.substring(3,6);}}
-          <br ng-if="obj.medicine_name.length > 6">{{obj.medicine_name.substring(6,9);}}
-          <br ng-if="obj.medicine_name.length > 9">{{obj.medicine_name.substring(9,12);}}
-        </td>
-        <td style="vertical-align:top;text-align:right;" >{{obj.count}}</td>
-      </tr>
-    </table>
+  <center><h2>福润堂</h2> </center>
+  门诊号：{{data.case.case_no}} 
+    
     <br>
       单付价格：{{data.case.suitprice}}  <br>
       付数：{{data.case.suitcount}}<br>
@@ -35,6 +18,11 @@
       支付方式： {{data.case.pay_type}}<br>
       收入： {{data.case.shouru}}<br>
       找零： {{data.case.zhaoling}}<br>
+
+      <br><br><br><br><br>
+      <h2>取药单</h2>
+      门诊号：{{data.case.case_no}} <br>
+      姓名：{{data.case.patient_name}}<br>
   
 <script type="text/javascript">
   var serverUrl = "http://192.168.1.2:8080";
