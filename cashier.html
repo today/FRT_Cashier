@@ -15,22 +15,11 @@
   
 </head>
 <body ng-app="inputApp" ng-controller="Ctrl">
-  <span id='debug_area' style='display:none;'> 开发人员专用区域，按  `  键(ESC键下面那个键)，就可隐藏。  
-    
-    <input type="button" id="id_fill" value=" 测试: 填充数据 " ng-click="test_fill()"  />
-  </span>
 
   <h1 style="">福润堂</h1> <div class="msg">{{msg}}</div>
   <h2>收银   <a href="add_img.html"  style="float:right;">添加图片</a></h2>
   <br>
-  <!--
-  <div>
-    病历号:   <input  type="text"   ng-model="fields.patient_no"   style="width:100px"  required ng-trim="true" />
-    姓名:     <input  type="text"   ng-model="fields.patient_name" style="width:60px"   /> 
-    性别:     <input  type="text"       ng-model="newdata.case.sex"     style="width:20px"    />
-    年龄:     <input  type="number"     ng-model="newdata.case.age"     style="width:30px"    />
-  </div>
--->
+  
   <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case.case_no"  ng-blur="go_case_no()" style="width:150px"  readonly />
     <input type="button" ng-click="go_showBooking()"  value=" 选取 ">
     <input type="button" ng-click="go_xiaofangzi()"  value=" 小方子 ">
@@ -192,17 +181,25 @@
       oneObj.price = "";
       //oneObj.xiaoji = "";
       //oneObj.xiaoji = oneObj.price * oneObj.count;
-      $scope.data.case.recipe.push(oneObj);
+      if( $scope.data.case.recipe ){
+        $scope.data.case.recipe.push(oneObj);
+      }else{
+        $scope.data.case.recipe = [];
+        $scope.data.case.recipe.push(oneObj);
+      }
+      
 
       $scope.fields.medicine_name = "";
       $scope.fields.count = "";
 
-      $scope.go_calc();
+      
 
       $scope.zjm = "";
       var obj = document.getElementById( 'id_0' );
       obj.focus();
       obj.select();
+
+      console.log(  $scope.data.case  );
     };
 
     // 计算药价
@@ -255,8 +252,7 @@
         var case_no = $scope.data.case.case_no;
         var aStr = JSON.stringify($scope.data);
         console.log( "$scope.datas = ###" + aStr + "###" );
-        // Write a file:
-        //fs.writeFileSync( "./data/recipe/c" + case_no + ".json", aStr);
+        
         
         $http.post( serverUrl + '/saveRecipe',  aStr)
             .success(function(data, status, headers, config) {
@@ -274,6 +270,8 @@
     };
 
     $scope.go_print = function(){
+      console.log(  $scope.data.case  );
+
       if( isblank($scope.data.case.case_no) ){
         alert("请输入门诊号");
         obj = document.getElementById( 'id_case_no' );
@@ -293,19 +291,32 @@
         return false;
       }
 
-      if( $scope.data.case.finished === false ){
+      console.log("$scope.data.case.finished = " + $scope.data.case.finished);
+      if( $scope.data.case.finished ){
+        console.log("Already save. Do nothing.");
+      }
+      else{
         $scope.data.case.finished = true;
-        if( $scope.go_save() ){
-          console.log("Save recipe successful.");
-        }else{
-          console.log("Error on Save recipe.");
-          return false;
-        }
+        var case_no = $scope.data.case.case_no;
+        var aStr = JSON.stringify($scope.data);
+        console.log( "$scope.datas = ###" + aStr + "###" );
+        
+        $http.post( serverUrl + '/saveRecipe',  aStr)
+            .success(function(data, status, headers, config) {
+              console.log("Case save successful. " + data);
+            })
+            .error(function(data, status, headers, config) { 
+              console.log(data);
+              console.log(status);
+              console.log(headers);
+              console.log(config);
+              console.log("Error on Save recipe.");
+        });   
       }
       window.open("print_recipe.html?c" + $scope.data.case.case_no, "Print",
                    "width=300,height=600,location=no,directories=no,menubar=no,resizable=no,toolbar=no");
           
-      $scope.go_clear(); 
+      //$scope.go_clear(); 
     };
 
     
@@ -337,21 +348,18 @@
       var case_no = $scope.data.case.case_no;
 
       var filename = "c" + case_no + ".json";
-      console.log( filename );
+      console.log( $scope.data.case );
 
       $http.get( serverUrl + '/getRecipe?filename=' + filename)
           .success(function(data) {
             if( data.flag ){
               if(data.flag==='error'){
-                //$scope.msg = "Back end Error. " + data.msg;
-                $scope.go_clear();
-                $scope.data.case.case_no = case_no;
-                $scope.finished = $scope.data.case.finished;
-
+                console.log("Back end Error. " + data.msg);
               }else{
                 $scope.msg = "Undefine Error.";
               }
             }else{
+              console.log("Success. " + data);
               $scope.data = data;
               if( $scope.data.case ){
                 if( $scope.data.case.finished ){
@@ -366,25 +374,6 @@
             console.log(data);
             $scope.msg = "Front end Error.";
           });
-
-
-      // if( fs.existsSync( filename) ){
-      //   $scope.data = readFileToJson(filename);
-      //   //console.log($scope.data);
-
-      //   if( $scope.data.case ){
-      //     if( $scope.data.case.finished ){
-      //       $scope.finished = $scope.data.case.finished;
-      //     }else{     
-      //       $scope.data.case.finished=false;
-      //     }
-      //   }
-      // }
-      // else{
-      //   console.log( filename + " not exists.");
-      //   $scope.go_clear(); 
-      //   $scope.data.case.case_no = case_no;
-      // }
     };
 
 
@@ -499,8 +488,9 @@
       }else{
         $scope.data.case.doctor_name = obj.doctor_name;  
       }
-
+      $scope.finished = false;
       $scope.flag_hideBooking = true;    
+      console.log(  $scope.data.case  );
     };
 
     $scope.getAllMedicine = function(){
@@ -524,9 +514,7 @@
                     //console.log(typeof(medic));
                     $scope.medicine_list.push(medic);
                   }
-                }
-
-              
+                }              
             })
             .error(function(data, status, headers, config) {
               console.log(data);
@@ -539,29 +527,6 @@
     //console.log(" len:" + $scope.allMedicine.length);
     //console.log($scope.allMedicine[0]);
 
-
-    
-    //console.log($scope.medicine_list);
-
-    $scope.test_fill = function(){
-
-      $scope.data.case.recipe[0] = _.clone($scope.allMedicine[10]);
-      $scope.data.case.recipe[0].count = 7;
-      $scope.data.case.recipe[0].unit = "克";
-      $scope.data.case.recipe[0].price = "";
-
-      $scope.data.case.recipe[1] = _.clone($scope.allMedicine[11]);
-      $scope.data.case.recipe[1].count = 9;
-      $scope.data.case.recipe[1].unit = "克";
-      $scope.data.case.recipe[1].price = "";
-
-      $scope.data.case.recipe[2] = _.clone($scope.allMedicine[13]);
-      $scope.data.case.recipe[2].count = 11;
-      $scope.data.case.recipe[2].unit = "克";
-      $scope.data.case.recipe[2].price = "";
-      
-      $scope.data.case.suitcount = 3;
-    };
   }
 
 
