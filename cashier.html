@@ -12,14 +12,14 @@
       background-color: yellow;
     }
   </style>
-  
+
 </head>
 <body ng-app="inputApp" ng-controller="Ctrl">
 
   <h1 style="">福润堂</h1> <div class="msg">{{msg}}</div>
   <h2>收银   <a href="add_img.html"  style="float:right;">添加图片</a></h2>
   <br>
-  
+
   <h3>门诊号：<input  type="text"  id="id_case_no"  ng-model="data.case.case_no"  ng-blur="go_case_no()" style="width:150px"  readonly />
     <input type="button" ng-click="go_showBooking()"  value=" 选取 ">
     <input type="button" ng-click="go_xiaofangzi()"  value=" 小方子 ">
@@ -40,20 +40,24 @@
         <td>{{obj.name}}</td>
         <td>{{obj.remark}}</td>
         <td><input type="button" ng-click="go_select( obj )" value=" 选择 ">  </td>
-        
+
       </tr>
       <tr>
         <td colspan="6">
           日期选择： <input type="date" name="i_date" ng-model="selected_date" ng-change="go_showBooking()"  />
         </td>
       </tr>
-    </table> 
-  
-  <table border="0"><tr>   
-    <td> 
-      <h3 >   处方：    
+    </table>
+
+  <table border="0"><tr>
+    <td>
+      <h3>定病： <input type="text" name="dingbing" ng-model="data.case.dingbing"><br>
+          定性： <input type="text" name="dingxing" ng-model="data.case.dingxing"><br>
+          定症： <input type="text" name="dingzheng" ng-model="data.case.dingzheng"><br>
+      </h3>
+      <h3 >   处方：
         <table border="1" width="500">
-          <tr><td></td><td>药名</td><td>用量</td><td>单位</td><td>单价</td><td>小计</td><td></td></tr>  
+          <tr><td></td><td>药名</td><td>用量</td><td>单位</td><td>单价</td><td>小计</td><td></td></tr>
 
           <tr ng-repeat="obj in data.case.recipe">
             <td>&nbsp; {{$index+1}} &nbsp; </td>
@@ -64,12 +68,12 @@
             <td>{{obj.xiaoji}}</td>
             <td><input type="button" ng-click="goDel( $index )"  value=" 删除 "> </td>
           </tr>
-         
+
         </table>
         <br>
         <div ng-hide="finished">
         助记码：<input  type="text"  id="id_0"   ng-model="zjm"  ng-change="go_zjm()"   style="width:35px" />
-          
+
         药品名称：
           <input  type="text" ng-model="fields.medicine_name" style="width:80px" readonly >
 
@@ -88,34 +92,34 @@
         <br>
         <h2 style="line-height:200%;">
           单付价格：{{data.suitprice}}<br>
-          抓药数量(付数)：<input  type="number" value="0" id="id_suitcount" onclick="go_selected(this)" 
-          ng-change="go_suitcountChange()" ng-model="data.case.suitcount"     ng-readonly="finished"   required 
+          抓药数量(付数)：<input  type="number" value="0" id="id_suitcount" onclick="go_selected(this)"
+          ng-change="go_suitcountChange()" ng-model="data.case.suitcount"     ng-readonly="finished"   required
           style="width:75px" />
           <input type="button" value=" 计价 "   ng-click="go_calc()"   />
-          
+
           </h2>
       </td>
-    <td width="5%">&nbsp;&nbsp;&nbsp;</td>    
+    <td width="5%">&nbsp;&nbsp;&nbsp;</td>
     <td width="35%" style="vertical-align:text-top;">
       <h2 style="line-height:200%;">
-        
+
         总价：{{data.case.sumprice}}
-        
+
         <br>
-        支付方式： <input type="radio" name="pay_type" ng-model="data.case.pay_type"  value="vip_card"> 会员卡 
-        <input type="radio" name="pay_type" ng-model="data.case.pay_type"  value="cash" checked > 现金 
+        支付方式： <input type="radio" name="pay_type" ng-model="data.case.pay_type"  value="vip_card"> 会员卡
+        <input type="radio" name="pay_type" ng-model="data.case.pay_type"  value="cash" checked > 现金
         <br>
-        收入金额： 
-        <input type="number" id="id_shouru"   ng-model="data.case.shouru" ng-readonly="finished" 
+        收入金额：
+        <input type="number" id="id_shouru"   ng-model="data.case.shouru" ng-readonly="finished"
         onclick="go_selected(this)" style="width:80px" /><br>
-        
+
         找零金额： {{ data.case.zhaoling = (data.case.shouru-data.case.sumprice).toFixed(1)}} </h2><br>
 
-        
+
         <input type="button" value=" 打印 "   ng-click="go_print()"   />
         <input type="button" value=" 清除 "   ng-click="go_clear()"   />
-        
-        
+
+
     </td>
   </tr>
 </table>
@@ -125,17 +129,21 @@
   var inputApp = angular.module('inputApp', []);
 
   function Ctrl($scope, $http) {
-    
+
 
     $scope.dummy = "will";
     $scope.zjm = "";
-    
+
     $scope.data = {};
     $scope.fields = {};
     $scope.data.patient = {};
     $scope.data.case = {};
     $scope.data.case.recipe = [];
-    
+
+    $scope.data.case.dingbing = "";
+    $scope.data.case.dingxing = "";
+    $scope.data.case.dingzheng = "";
+
     $scope.data.case.suitprice = 0;
     $scope.data.case.suitcount = 0;
     $scope.data.case.sumprice = 0;
@@ -172,7 +180,7 @@
         obj.select();
         return false;
       }
-      
+
 
       var oneObj = {};
       oneObj.medicine_name = $scope.fields.medicine_name;
@@ -187,12 +195,12 @@
         $scope.data.case.recipe = [];
         $scope.data.case.recipe.push(oneObj);
       }
-      
+
 
       $scope.fields.medicine_name = "";
       $scope.fields.count = "";
 
-      
+
 
       $scope.zjm = "";
       var obj = document.getElementById( 'id_0' );
@@ -203,7 +211,7 @@
     };
 
     // 计算药价
-    $scope.go_calc = function(){ 
+    $scope.go_calc = function(){
 
       // 检查输入是否正确
       if( $scope.data.case.recipe.length === 0 ){
@@ -220,7 +228,7 @@
         obj.select();
         return false;
       }
-      
+
 
       //$scope.data.case.suitprice = 0;
       var temp_suitprice = 0;
@@ -236,7 +244,7 @@
       }
       $scope.data.case.suitprice = (Math.ceil(temp_suitprice*10)/10).toFixed(2);
       console.log("calc " + $scope.data.case.suitprice);
-      
+
       $scope.data.case.sumprice = ($scope.data.case.suitprice * $scope.data.case.suitcount).toFixed(2);
       console.log("calc finished" + $scope.data.case.sumprice);
     };
@@ -246,27 +254,27 @@
       $scope.data.case.recipe = _.compact($scope.data.case.recipe);
     };
 
-    
+
 
     $scope.go_save = function(){
         var case_no = $scope.data.case.case_no;
         var aStr = JSON.stringify($scope.data);
         console.log( "$scope.datas = ###" + aStr + "###" );
-        
-        
+
+
         $http.post( serverUrl + '/saveRecipe',  aStr)
             .success(function(data, status, headers, config) {
-              //console.log(data);  
+              //console.log(data);
               console.log("Case save successful. " + data);
               return true;
             })
-            .error(function(data, status, headers, config) { 
+            .error(function(data, status, headers, config) {
               console.log(data);
               console.log(status);
               console.log(headers);
               console.log(config);
-              console.log("upload error.");  
-        });    
+              console.log("upload error.");
+        });
     };
 
     $scope.go_print = function(){
@@ -280,7 +288,7 @@
         return false;
       }else if( isblank($scope.data.case.pay_type) ){
         alert("请选择付款方式");
-        
+
         return false;
       }
       else if( $scope.data.suitcount <= 0 ){
@@ -300,26 +308,26 @@
         var case_no = $scope.data.case.case_no;
         var aStr = JSON.stringify($scope.data);
         console.log( "$scope.datas = ###" + aStr + "###" );
-        
+
         $http.post( serverUrl + '/saveRecipe',  aStr)
             .success(function(data, status, headers, config) {
               console.log("Case save successful. " + data);
             })
-            .error(function(data, status, headers, config) { 
+            .error(function(data, status, headers, config) {
               console.log(data);
               console.log(status);
               console.log(headers);
               console.log(config);
               console.log("Error on Save recipe.");
-        });   
+        });
       }
       window.open("print_recipe.html?c" + $scope.data.case.case_no, "Print",
                    "width=300,height=600,location=no,directories=no,menubar=no,resizable=no,toolbar=no");
-          
-      //$scope.go_clear(); 
+
+      //$scope.go_clear();
     };
 
-    
+
     $scope.go_clear = function(){
       $scope.data = {};
       $scope.data.patient = {};
@@ -344,7 +352,7 @@
     };
 
     $scope.go_case_no = function(){
-      
+
       var case_no = $scope.data.case.case_no;
 
       var filename = "c" + case_no + ".json";
@@ -364,10 +372,10 @@
               if( $scope.data.case ){
                 if( $scope.data.case.finished ){
                   $scope.finished = $scope.data.case.finished;
-                }else{     
+                }else{
                   $scope.data.case.finished=false;
                 }
-              }             
+              }
             }
           })
           .error(function(data, status, headers, config) {
@@ -378,7 +386,7 @@
 
 
     $scope.go_zjm = function(){
-      
+
       var str_zjm = $scope.zjm;
 
       var temp_array = _.filter($scope.allMedicine, $scope.condition_zjm);
@@ -444,7 +452,7 @@
 
       $scope.data.case.case_no = temp_no;
       $scope.go_case_no();
-      
+
       $scope.data.case.patient_no = "4";
       $scope.data.case.patient_name = "小方子";
       $scope.data.case.mobile = "10000000000";
@@ -466,18 +474,18 @@
       $scope.data.case = {};
       $scope.data.case.case_no = obj.case_no;
       $scope.go_case_no();
-      
+
       $scope.data.case.patient_no = obj.patient_no;
       console.log(obj.name);
       $scope.data.case.patient_name = obj.name;
       $scope.data.case.mobile = obj.mobile;
-      
+
       if(obj.remark===null){
         $scope.data.case.patient_comment = "";
       }else{
-        $scope.data.case.patient_comment = obj.remark;  
+        $scope.data.case.patient_comment = obj.remark;
       }
-      
+
       $scope.data.case.sex = obj.sex;
       $scope.data.case.age = obj.age;
       $scope.data.case.comment = obj.comment;
@@ -486,10 +494,10 @@
       if(obj.doctor_name===null){
         $scope.data.case.doctor_name = "";
       }else{
-        $scope.data.case.doctor_name = obj.doctor_name;  
+        $scope.data.case.doctor_name = obj.doctor_name;
       }
       $scope.finished = false;
-      $scope.flag_hideBooking = true;    
+      $scope.flag_hideBooking = true;
       console.log(  $scope.data.case  );
     };
 
@@ -514,7 +522,7 @@
                     //console.log(typeof(medic));
                     $scope.medicine_list.push(medic);
                   }
-                }              
+                }
             })
             .error(function(data, status, headers, config) {
               console.log(data);
@@ -534,18 +542,14 @@
   var go_selected = function( tempobj ){
     tempobj.select();
   };
-  
+
   var obj = document.getElementById( 'id_0' );
   obj.focus();
 
   debug_flag = 0;
 
-  
+
 
   </script>
 </body>
 </html>
-
-
-
-
